@@ -7,7 +7,7 @@ interface TitleState {
 }
 
 const initialState: TitleState = {
-  value: "Hello World",
+  value: "",
 };
 
 export const titleSlice = createSlice({
