@@ -16,6 +16,9 @@ import {
   Title,
   Modal,
   Flex,
+  Card,
+  SimpleGrid,
+  Text,
 } from "@mantine/core";
 import { DateTimePicker } from "@mantine/dates";
 import { IconCheck, IconX, IconPlus } from "@tabler/icons-react";
@@ -132,11 +135,7 @@ export default function CreatePage() {
             <Button onClick={open} rightIcon={<IconPlus size="1rem" />}>
               Event
             </Button>
-            <Modal
-              opened={opened}
-              onClose={close}
-              fullScreen
-              title="Create Event">
+            <Modal opened={opened} onClose={close} withCloseButton={false}>
               <Notifications />
               <Grid>
                 <Grid.Col xs={12}>
@@ -154,22 +153,24 @@ export default function CreatePage() {
                       mt="md"
                       {...form.getInputProps("description")}
                     />
-                    <DateTimePicker
-                      label="Period start"
-                      placeholder="Pick date and time"
-                      valueFormat="DD MMM YYYY hh:mm A"
-                      maw={400}
-                      mx="auto"
-                      {...form.getInputProps("period_start")}
-                    />
-                    <DateTimePicker
-                      label="Period end"
-                      placeholder="Pick date and time"
-                      valueFormat="DD MMM YYYY hh:mm A"
-                      maw={400}
-                      mx="auto"
-                      {...form.getInputProps("period_end")}
-                    />
+                    <Flex justify="space-between">
+                      <DateTimePicker
+                        label="Period start"
+                        placeholder="Pick date and time"
+                        valueFormat="DD MMM YYYY hh:mm A"
+                        maw={400}
+                        dropdownType="modal"
+                        {...form.getInputProps("period_start")}
+                      />
+                      <DateTimePicker
+                        label="Period end"
+                        placeholder="Pick date and time"
+                        valueFormat="DD MMM YYYY hh:mm A"
+                        maw={400}
+                        dropdownType="modal"
+                        {...form.getInputProps("period_end")}
+                      />
+                    </Flex>
                     <NumberInput
                       label="Limit user"
                       placeholder="Limit user"
@@ -179,7 +180,14 @@ export default function CreatePage() {
                     />
 
                     <Group position="right" mt="md">
-                      <Button onClick={() => handleClickSubmit("DRAFT")}>
+                      <Button
+                        bg="gray"
+                        sx={{
+                          ":hover": {
+                            backgroundColor: "#bfbfbf",
+                          },
+                        }}
+                        onClick={() => handleClickSubmit("DRAFT")}>
                         DRAFT
                       </Button>
                       <Button onClick={() => handleClickSubmit("PUBLISHED")}>
@@ -193,18 +201,28 @@ export default function CreatePage() {
           </Flex>
         </Grid.Col>
         <Grid.Col xs={12}>
-          <Grid justify="space-evenly">
-            {["1", "2", "3", "4"].map((event, index) => (
-              <Grid.Col key={index} xs={12} sm={5} md={2}>
-                <ArticleCardImage
-                  title={event}
-                  category="run"
-                  image="https://picsum.photos/200/300"
-                  key={index}
-                />
-              </Grid.Col>
+          <SimpleGrid
+            cols={4}
+            spacing="lg"
+            breakpoints={[
+              { maxWidth: "62rem", cols: 3, spacing: "md" },
+              { maxWidth: "48rem", cols: 2, spacing: "sm" },
+              { maxWidth: "36rem", cols: 1, spacing: "sm" },
+            ]}>
+            {["1", "2", "3", "4", "5", "6"].map((event, index) => (
+              <Card
+                key={index}
+                shadow="lg"
+                padding="sm"
+                h={250}
+                sx={{
+                  borderRadius: 15,
+                }}>
+                <Card.Section></Card.Section>
+                <Text>aaaaaaaaa</Text>
+              </Card>
             ))}
-          </Grid>
+          </SimpleGrid>
         </Grid.Col>
       </Grid>
     </>
