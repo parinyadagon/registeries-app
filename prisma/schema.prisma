@@ -59,7 +59,7 @@ model VerificationToken {
 model Event {
   id           String   @id @default(cuid())
   name         String
-  description  String
+  description  String   @db.Text
   limit_user   Int
   period_start DateTime
   period_end   DateTime
