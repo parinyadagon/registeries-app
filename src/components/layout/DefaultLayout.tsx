@@ -5,6 +5,7 @@ import {
   MediaQuery,
   Burger,
   useMantineTheme,
+  Container,
 } from "@mantine/core";
 
 import Head from "next/head";

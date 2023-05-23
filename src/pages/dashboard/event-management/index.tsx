@@ -1,7 +1,7 @@
 import { useEffectOnce, useTitle } from "@/hooks";
 import { useSession } from "next-auth/react";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 // Mantine
 import { useForm, isNotEmpty } from "@mantine/form";
@@ -19,6 +19,7 @@ import {
   Card,
   SimpleGrid,
   Text,
+  Badge,
 } from "@mantine/core";
 import { DateTimePicker } from "@mantine/dates";
 import { IconCheck, IconX, IconPlus } from "@tabler/icons-react";
@@ -49,7 +50,7 @@ export default function CreatePage() {
     };
   });
 
-  useEffectOnce(() => {
+  useEffect(() => {
     fetchWithMethod<{
       message: string;
       status: string;
@@ -69,7 +70,22 @@ export default function CreatePage() {
         });
       }
     });
-  });
+  }, [email]);
+
+  const colorGradient = [
+    { from: "#696eff", to: "#f8acff", deg: 20 },
+    { from: "#439cfb", to: "#f187fb", deg: 20 },
+    { from: "#b597f6", to: "#96c6ea", deg: 20 },
+    { from: "#7c65a9", to: "#96d4ca", deg: 20 },
+    { from: "#d397fa", to: "#8364e8", deg: 20 },
+    { from: "#82f4b1", to: "#30c67c", deg: 20 },
+    { from: "#a8f368", to: "#9946b2", deg: 20 },
+    { from: "#e9d022", to: "#e60b09", deg: 20 },
+    { from: "#f3696e", to: "#f8a902", deg: 20 },
+    { from: "#6274e7", to: "#8752a3", deg: 20 },
+  ];
+
+  const randomGradient = () => colorGradient[Math.floor(Math.random() * 10)];
 
   const form = useForm({
     initialValues: {
@@ -107,6 +123,8 @@ export default function CreatePage() {
       );
 
       if (response.status === 200) {
+        close();
+        form.reset();
         Notifications.show({
           title: "Success",
           message: "Event created",
@@ -209,17 +227,29 @@ export default function CreatePage() {
               { maxWidth: "48rem", cols: 2, spacing: "sm" },
               { maxWidth: "36rem", cols: 1, spacing: "sm" },
             ]}>
-            {["1", "2", "3", "4", "5", "6"].map((event, index) => (
+            {events.map((event, index) => (
               <Card
                 key={index}
                 shadow="lg"
                 padding="sm"
-                h={250}
-                sx={{
+                h={200}
+                sx={(theme) => ({
                   borderRadius: 15,
-                }}>
-                <Card.Section></Card.Section>
-                <Text>aaaaaaaaa</Text>
+                  backgroundImage: theme.fn.gradient(randomGradient()),
+                  position: "relative",
+                })}>
+                <Badge
+                  sx={{
+                    position: "absolute",
+                    bottom: 15,
+                    right: 15,
+                  }}>
+                  {event.status}
+                </Badge>
+                <Title>{event.name}</Title>
+                <Text fz="md" lineClamp={4}>
+                  {event.description}
+                </Text>
               </Card>
             ))}
           </SimpleGrid>
