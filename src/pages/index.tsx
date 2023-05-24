@@ -2,6 +2,7 @@ import { fetchWithMethod, useTitle } from "@/hooks";
 import { useEffectOnce } from "@/hooks/index";
 import { useState } from "react";
 import type { Event } from "@/hooks/types/Event";
+import dayjs from "@/lib/dayjs";
 
 // Mantine
 import {
@@ -48,6 +49,14 @@ export default function Home() {
 
   const randomGradient = () => colorGradient[Math.floor(Math.random() * 10)];
 
+  const convertDate = (date: string) => {
+    return dayjs(date).format("DDMMMBBBB");
+  };
+
+  const handleClickJoin = (event: Event) => {
+    console.log(event);
+  };
+
   return (
     <>
       <Container size="xl" px="xs">
@@ -71,6 +80,34 @@ export default function Home() {
                 position: "relative",
               })}>
               <Title order={3}>{event.name}</Title>
+              <Text lineClamp={4}>{event.description}</Text>
+
+              <Badge
+                color="blue"
+                variant="light"
+                sx={{
+                  position: "absolute",
+                  bottom: 20,
+                  left: 20,
+                }}>
+                <Text>
+                  {convertDate(event.period_start)} -
+                  {convertDate(event.period_end)}
+                </Text>
+              </Badge>
+              <Button
+                onClick={() => handleClickJoin(event)}
+                sx={{
+                  position: "absolute",
+                  bottom: 20,
+                  right: 20,
+                }}
+                radius="lg"
+                color="red"
+                compact
+                size="md">
+                Join
+              </Button>
             </Card>
           ))}
         </SimpleGrid>
