@@ -1,6 +1,6 @@
 import { fetchWithMethod, useTitle } from "@/hooks";
 import { useEffectOnce } from "@/hooks/index";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import type { Event } from "@/hooks/types/Event";
 import dayjs from "@/lib/dayjs";
 
@@ -13,6 +13,9 @@ import {
   Button,
   Badge,
   Container,
+  Image,
+  AspectRatio,
+  Group,
 } from "@mantine/core";
 
 export default function Home() {
@@ -47,7 +50,10 @@ export default function Home() {
     { from: "#6274e7", to: "#8752a3", deg: 20 },
   ];
 
-  const randomGradient = () => colorGradient[Math.floor(Math.random() * 10)];
+  const randomGradient = useMemo(
+    () => colorGradient[Math.floor(Math.random() * 10)],
+    []
+  );
 
   const convertDate = (date: string) => {
     return dayjs(date).format("DDMMMBBBB");
@@ -59,55 +65,44 @@ export default function Home() {
 
   return (
     <>
-      <Container size="xl" px="xs">
+      <Container size="xl">
         <SimpleGrid
           cols={4}
           spacing="lg"
           breakpoints={[
             { maxWidth: "sm", cols: 1, spacing: "md" },
-            { maxWidth: "md", cols: 3, spacing: "md" },
-            { maxWidth: "lg", cols: 4, spacing: "md" },
+            { maxWidth: "md", cols: 2, spacing: "md" },
+            { maxWidth: "lg", cols: 3, spacing: "md" },
           ]}>
           {events.map((event, index) => (
             <Card
               key={index}
               shadow="lg"
               padding="sm"
-              h={200}
+              h={270}
               sx={(theme) => ({
-                borderRadius: 15,
-                backgroundImage: theme.fn.gradient(randomGradient()),
-                position: "relative",
+                borderRadius: 5,
               })}>
-              <Title order={3}>{event.name}</Title>
-              <Text lineClamp={4}>{event.description}</Text>
-
-              <Badge
-                color="blue"
-                variant="light"
-                sx={{
-                  position: "absolute",
-                  bottom: 20,
-                  left: 20,
-                }}>
-                <Text>
-                  {convertDate(event.period_start)} -
-                  {convertDate(event.period_end)}
-                </Text>
-              </Badge>
-              <Button
-                onClick={() => handleClickJoin(event)}
-                sx={{
-                  position: "absolute",
-                  bottom: 20,
-                  right: 20,
-                }}
-                radius="lg"
-                color="red"
-                compact
-                size="md">
-                Join
-              </Button>
+              <Card.Section>
+                <AspectRatio ratio={16 / 9}>
+                  <Image
+                    src="https://cdn.pixabay.com/photo/2023/05/21/07/47/horse-8008038_1280.jpg"
+                    alt="gg"
+                    fit="contain"
+                  />
+                </AspectRatio>
+              </Card.Section>
+              <Group position="apart">
+                <Badge color="blue" variant="light">
+                  <Text>
+                    {convertDate(event.period_start)} -
+                    {convertDate(event.period_end)}
+                  </Text>
+                </Badge>
+                <Badge color="blue" variant="light">
+                  <Text>location</Text>
+                </Badge>
+              </Group>
             </Card>
           ))}
         </SimpleGrid>

@@ -1,7 +1,7 @@
 import { useEffectOnce, useTitle } from "@/hooks";
 import { useSession } from "next-auth/react";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 
 // Mantine
 import { useForm, isNotEmpty } from "@mantine/form";
@@ -85,7 +85,11 @@ export default function CreatePage() {
     { from: "#6274e7", to: "#8752a3", deg: 20 },
   ];
 
-  const randomGradient = () => colorGradient[Math.floor(Math.random() * 10)];
+  const randomGradient = useMemo(
+    () => colorGradient[Math.floor(Math.random() * 10)],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
 
   const form = useForm({
     initialValues: {
@@ -235,7 +239,7 @@ export default function CreatePage() {
                 h={200}
                 sx={(theme) => ({
                   borderRadius: 15,
-                  backgroundImage: theme.fn.gradient(randomGradient()),
+                  backgroundImage: theme.fn.gradient(randomGradient),
                   position: "relative",
                 })}>
                 <Badge

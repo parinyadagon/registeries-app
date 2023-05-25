@@ -108,9 +108,7 @@ export default function DefaultLayout({ children }: DefaultLayoutProps) {
             </Container>
           </Header>
         }>
-        <Container size="xl" py="md">
-          {children}
-        </Container>
+        {children}
       </AppShell>
     </>
   );
