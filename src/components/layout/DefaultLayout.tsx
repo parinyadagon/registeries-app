@@ -76,37 +76,41 @@ export default function DefaultLayout({ children }: DefaultLayoutProps) {
           )
         }
         header={
-          <Header height={{ base: 50, md: 70 }} p="md">
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                height: "100%",
-              }}>
-              <MediaQuery largerThan="md" styles={{ display: "none" }}>
-                <Burger
-                  opened={opened}
-                  onClick={() => setOpened((o) => !o)}
-                  size="sm"
-                  color={theme.colors.gray[6]}
-                  mr="xl"
-                />
-              </MediaQuery>
-              <MediaQuery smallerThan="sm" styles={{ display: "none" }}>
-                <MantineLogo size={28} />
-              </MediaQuery>
-              {!auth ? (
-                <GoogleButton radius="xl" logIn={() => signIn()}>
-                  Sign In Google
-                </GoogleButton>
-              ) : (
-                <></>
-              )}
-            </div>
+          <Header height={{ base: 70, md: 70 }} p="md">
+            <Container size="xl">
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  height: "100%",
+                }}>
+                <MediaQuery largerThan="md" styles={{ display: "none" }}>
+                  <Burger
+                    opened={opened}
+                    onClick={() => setOpened((o) => !o)}
+                    size="sm"
+                    color={theme.colors.gray[6]}
+                    mr="xl"
+                  />
+                </MediaQuery>
+                <MediaQuery smallerThan="sm" styles={{ display: "none" }}>
+                  <MantineLogo size={28} />
+                </MediaQuery>
+                {!auth ? (
+                  <GoogleButton radius="xl" logIn={() => signIn()}>
+                    Sign In Google
+                  </GoogleButton>
+                ) : (
+                  <></>
+                )}
+              </div>
+            </Container>
           </Header>
         }>
-        {children}
+        <Container size="xl" py="md">
+          {children}
+        </Container>
       </AppShell>
     </>
   );
