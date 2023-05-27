@@ -26,13 +26,14 @@ import { DateTimePicker } from "@mantine/dates";
 import { IconCheck, IconX, IconPlus } from "@tabler/icons-react";
 import { Notifications } from "@mantine/notifications";
 import { useDisclosure } from "@mantine/hooks";
+import { FileWithPath } from "@mantine/dropzone";
 
 // Hooks
 import { fetchWithMethod } from "@/hooks";
 
 // Components
-import { ArticleCardImage } from "@/components/CardWithBgImage";
 import TextEditor from "@/components/TextEditor";
+import UploadImage from "@/components/UploadImage";
 
 // Types
 import { Event } from "@/hooks/types/Event";
@@ -158,6 +159,33 @@ export default function CreatePage() {
     setContent(content);
   };
 
+  // Image Upload
+
+  const [image, setImage] = useState<FileWithPath[] | undefined>();
+  const [imagePreview, setImagePreview] = useState<JSX.Element[]>([]);
+  const handleGetImage = (
+    image: FileWithPath[] | undefined,
+    imagePreview: JSX.Element[]
+  ) => {
+    if (image === undefined) return;
+    setImage(image);
+    setImagePreview(imagePreview);
+  };
+
+  const uploadToServer = async () => {
+    const formData = new FormData();
+    if (image === undefined) return;
+    for (let file of image) {
+      if (file instanceof File) formData.append("file", file);
+    }
+    const response = await fetch("/api/event/upload", {
+      method: "POST",
+      body: formData,
+    });
+
+    console.log("response", response);
+  };
+
   return (
     <>
       <Grid>
@@ -171,7 +199,7 @@ export default function CreatePage() {
               <Notifications />
 
               <Grid>
-                <Grid.Col xs={12}>
+                <Grid.Col xs={12} md={6}>
                   <Box component="form" maw={900} mx="auto">
                     <TextInput
                       label="Name"
@@ -179,17 +207,15 @@ export default function CreatePage() {
                       withAsterisk
                       {...form.getInputProps("name")}
                     />
-                    <TextInput
-                      label="Description"
-                      placeholder="Description"
-                      withAsterisk
-                      mt="md"
-                      {...form.getInputProps("description")}
-                    />
-                    <TextEditor onGetContent={handleGetContent} />
-                    <TypographyStylesProvider>
-                      <div dangerouslySetInnerHTML={{ __html: content }}></div>
-                    </TypographyStylesProvider>
+                    <Button onClick={uploadToServer}>uploadToServer</Button>
+                    <UploadImage onGetImage={handleGetImage} />
+                    <Box
+                      sx={{
+                        padding: " 0.75rem 0",
+                      }}>
+                      <TextEditor onGetContent={handleGetContent} />
+                    </Box>
+
                     <Flex justify="space-between">
                       <DateTimePicker
                         label="Period start"
@@ -232,6 +258,12 @@ export default function CreatePage() {
                       </Button>
                     </Group>
                   </Box>
+                </Grid.Col>
+
+                <Grid.Col xs={12} md={6}>
+                  <TypographyStylesProvider>
+                    <div dangerouslySetInnerHTML={{ __html: content }}></div>
+                  </TypographyStylesProvider>
                 </Grid.Col>
               </Grid>
             </Modal>
