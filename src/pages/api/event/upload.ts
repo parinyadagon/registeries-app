@@ -3,8 +3,6 @@ import { NextApiRequest, NextApiResponse } from "next";
 import path from "path";
 import fs from "fs/promises";
 
-import mv from "mv";
-
 export const config = {
   api: {
     bodyParser: false,
