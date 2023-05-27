@@ -14,7 +14,7 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <>
       <SessionProvider session={pageProps.session}>
-        <MantineProvider theme={{ colorScheme: "light" }}>
+        <MantineProvider theme={{ colorScheme: "light", fontFamily: "Prompt" }}>
           <Provider store={store}>
             <DefaultLayout>
               <Component {...pageProps} />

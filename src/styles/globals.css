@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Prompt&family=Roboto&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Prompt&display=swap');
 
 * {
   box-sizing: border-box;
@@ -12,5 +12,4 @@ body {
   height: 100vh;
   background: rgb(84, 84, 139);
   background: linear-gradient(0deg, rgba(84, 84, 139, 1) 0%, rgba(127, 127, 173, 1) 35%, rgba(186, 195, 196, 1) 100%);
-  font-family: 'Roboto', sans-serif;
 }
