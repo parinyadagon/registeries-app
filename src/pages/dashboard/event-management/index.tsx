@@ -20,6 +20,7 @@ import {
   SimpleGrid,
   Text,
   Badge,
+  TypographyStylesProvider,
 } from "@mantine/core";
 import { DateTimePicker } from "@mantine/dates";
 import { IconCheck, IconX, IconPlus } from "@tabler/icons-react";
@@ -31,6 +32,7 @@ import { fetchWithMethod } from "@/hooks";
 
 // Components
 import { ArticleCardImage } from "@/components/CardWithBgImage";
+import TextEditor from "@/components/TextEditor";
 
 // Types
 import { Event } from "@/hooks/types/Event";
@@ -148,6 +150,14 @@ export default function CreatePage() {
     }
   };
 
+  // Rich Text Editor.
+  const [content, setContent] = useState<string>(``);
+
+  const handleGetContent = (content: string | undefined) => {
+    if (content === undefined) return;
+    setContent(content);
+  };
+
   return (
     <>
       <Grid>
@@ -157,11 +167,12 @@ export default function CreatePage() {
             <Button onClick={open} rightIcon={<IconPlus size="1rem" />}>
               Event
             </Button>
-            <Modal opened={opened} onClose={close} withCloseButton={false}>
+            <Modal opened={opened} onClose={close} fullScreen>
               <Notifications />
+
               <Grid>
                 <Grid.Col xs={12}>
-                  <Box component="form" maw={400} mx="auto">
+                  <Box component="form" maw={900} mx="auto">
                     <TextInput
                       label="Name"
                       placeholder="Name"
@@ -175,6 +186,10 @@ export default function CreatePage() {
                       mt="md"
                       {...form.getInputProps("description")}
                     />
+                    <TextEditor onGetContent={handleGetContent} />
+                    <TypographyStylesProvider>
+                      <div dangerouslySetInnerHTML={{ __html: content }}></div>
+                    </TypographyStylesProvider>
                     <Flex justify="space-between">
                       <DateTimePicker
                         label="Period start"
