@@ -6,6 +6,7 @@ export interface Event {
   period_end: string;
   status: EventStatus;
   email?: string;
+  image?: string;
 }
 
 export enum EventStatus {

@@ -55,7 +55,6 @@ export default function UploadImage({
     <Dropzone
       onDrop={handleDrop}
       maxSize={3 * 1024 ** 2}
-      my={10}
       accept={IMAGE_MIME_TYPE}
       {...other}>
       {previews.length < 1 ? (

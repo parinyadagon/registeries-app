@@ -41,6 +41,7 @@ export default async function handler(
           period_end: event.period_end,
           status: event.status,
           user_id: user.id,
+          image: event.image || "",
         },
       });
 

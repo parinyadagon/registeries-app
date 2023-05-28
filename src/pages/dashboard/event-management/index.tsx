@@ -103,6 +103,7 @@ export default function CreatePage() {
       period_end: "",
       status: "",
       email: "",
+      image: "",
     },
 
     validate: {
@@ -122,6 +123,9 @@ export default function CreatePage() {
       } else {
         form.setFieldValue("status", "DRAFT");
       }
+
+      const { newImageName } = await uploadToServer();
+      form.setFieldValue("image", newImageName);
 
       const response = await fetchWithMethod(
         "/api/event/create",
@@ -160,7 +164,6 @@ export default function CreatePage() {
   };
 
   // Image Upload
-
   const [image, setImage] = useState<FileWithPath[] | undefined>();
   const [imagePreview, setImagePreview] = useState<JSX.Element[]>([]);
   const handleGetImage = (
@@ -172,22 +175,34 @@ export default function CreatePage() {
     setImagePreview(imagePreview);
   };
 
-  const uploadToServer = async () => {
+  async function uploadToServer(): Promise<{
+    newImageName: string;
+    error: string | null;
+  }> {
     const formData = new FormData();
-    if (image === undefined) return;
-    for (let file of image) {
-      if (file instanceof File) formData.append("file", file);
-    }
-    const response = await fetch("/api/event/upload", {
-      method: "POST",
-      body: formData,
-    });
+    return new Promise(async (resolve, reject) => {
+      if (image === undefined) {
+        reject({ newImageName: "", error: null });
+      } else {
+        for (let file of image) {
+          if (file instanceof File) formData.append("file", file);
+        }
+      }
+      const response = await fetch("/api/event/upload", {
+        method: "POST",
+        body: formData,
+      });
 
-    if (response.ok) {
-      const { files } = await response.json();
-      const newImagePreview = files.newFilename;
-    }
-  };
+      if (response.ok) {
+        const { files } = await response.json();
+        const newImageName = files.newFilename;
+
+        resolve({ newImageName, error: null });
+      } else {
+        reject({ newImageName: "", error: "Upload failed" });
+      }
+    });
+  }
 
   return (
     <>
@@ -205,26 +220,32 @@ export default function CreatePage() {
                 <Grid.Col xs={12} md={6}>
                   <Box component="form" maw={900} mx="auto">
                     <TextInput
-                      label="Name"
-                      placeholder="Name"
+                      label="Event Name"
+                      placeholder="Event Name"
                       withAsterisk
                       {...form.getInputProps("name")}
                     />
-                    <Button onClick={uploadToServer}>uploadToServer</Button>
-                    <UploadImage onGetImage={handleGetImage} />
                     <Box
                       sx={{
-                        padding: " 0.75rem 0",
+                        padding: "0.75rem 0",
                       }}>
+                      <Text>Image Cover</Text>
+                      <UploadImage onGetImage={handleGetImage} />
+                    </Box>
+                    <Box
+                      sx={{
+                        padding: "0.75rem 0",
+                      }}>
+                      <Text>Description</Text>
                       <TextEditor onGetContent={handleGetContent} />
                     </Box>
 
-                    <Flex justify="space-between">
+                    <Flex justify="space-between" gap={10}>
                       <DateTimePicker
                         label="Period start"
                         placeholder="Pick date and time"
                         valueFormat="DD MMM YYYY hh:mm A"
-                        maw={400}
+                        w="100%"
                         dropdownType="modal"
                         {...form.getInputProps("period_start")}
                       />
@@ -232,7 +253,7 @@ export default function CreatePage() {
                         label="Period end"
                         placeholder="Pick date and time"
                         valueFormat="DD MMM YYYY hh:mm A"
-                        maw={400}
+                        w="100%"
                         dropdownType="modal"
                         {...form.getInputProps("period_end")}
                       />

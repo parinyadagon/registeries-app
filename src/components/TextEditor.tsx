@@ -9,6 +9,7 @@ import SubScript from "@tiptap/extension-subscript";
 import Image from "@tiptap/extension-image";
 import { useEffect, useState } from "react";
 import { Popover, Button, TextInput } from "@mantine/core";
+import Placeholder from "@tiptap/extension-placeholder";
 
 import { IconPhoto } from "@tabler/icons-react";
 import { ActionIcon } from "@mantine/core";
@@ -30,6 +31,7 @@ export default function TextEditor({ onGetContent }: TextEditorProps) {
       Highlight,
       Image,
       TextAlign.configure({ types: ["heading", "paragraph"] }),
+      Placeholder.configure({ placeholder: "Edit description here." }),
     ],
     content,
     onUpdate({ editor }) {
