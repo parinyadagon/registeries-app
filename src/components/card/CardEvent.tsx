@@ -20,6 +20,7 @@ type CardEventProps = {
   location: string;
   date: string;
   title: string;
+  children?: React.ReactNode;
 };
 
 export default function CardEvent({
@@ -28,6 +29,7 @@ export default function CardEvent({
   location,
   date,
   title,
+  children,
 }: CardEventProps) {
   return (
     <Card
@@ -38,7 +40,7 @@ export default function CardEvent({
       }}>
       <Card.Section>
         <AspectRatio ratio={21 / 9}>
-          <Image src={image} alt="event" fit="cover" />
+          <Image src={image} withPlaceholder alt="event" fit="cover" />
         </AspectRatio>
       </Card.Section>
       <Group position="apart" pt="sm">
@@ -62,6 +64,7 @@ export default function CardEvent({
           </Flex>
         </Flex>
       </Group>
+      {children}
     </Card>
   );
 }

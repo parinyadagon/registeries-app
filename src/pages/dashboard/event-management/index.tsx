@@ -21,9 +21,10 @@ import {
   Text,
   Badge,
   TypographyStylesProvider,
+  ActionIcon,
 } from "@mantine/core";
 import { DateTimePicker } from "@mantine/dates";
-import { IconCheck, IconX, IconPlus } from "@tabler/icons-react";
+import { IconCheck, IconX, IconPlus, IconEdit } from "@tabler/icons-react";
 import { Notifications } from "@mantine/notifications";
 import { useDisclosure } from "@mantine/hooks";
 import { FileWithPath } from "@mantine/dropzone";
@@ -34,14 +35,21 @@ import { fetchWithMethod } from "@/hooks";
 // Components
 import TextEditor from "@/components/TextEditor";
 import UploadImage from "@/components/UploadImage";
+import CardEvent from "@/components/card/CardEvent";
 
 // Types
 import { Event } from "@/hooks/types/Event";
 
+// Libs
+import dayjs from "@/lib/dayjs";
+
 export default function CreatePage() {
   useTitle("Event Management");
   const { data: session } = useSession();
-  const email: string = session?.user?.email || "";
+  const email: string = useMemo(
+    () => session?.user?.email || "",
+    [session?.user?.email]
+  );
 
   const [opened, { open, close }] = useDisclosure(false);
 
@@ -54,6 +62,7 @@ export default function CreatePage() {
   });
 
   useEffect(() => {
+    if (email === "") return;
     fetchWithMethod<{
       message: string;
       status: string;
@@ -75,25 +84,6 @@ export default function CreatePage() {
     });
   }, [email]);
 
-  const colorGradient = [
-    { from: "#696eff", to: "#f8acff", deg: 20 },
-    { from: "#439cfb", to: "#f187fb", deg: 20 },
-    { from: "#b597f6", to: "#96c6ea", deg: 20 },
-    { from: "#7c65a9", to: "#96d4ca", deg: 20 },
-    { from: "#d397fa", to: "#8364e8", deg: 20 },
-    { from: "#82f4b1", to: "#30c67c", deg: 20 },
-    { from: "#a8f368", to: "#9946b2", deg: 20 },
-    { from: "#e9d022", to: "#e60b09", deg: 20 },
-    { from: "#f3696e", to: "#f8a902", deg: 20 },
-    { from: "#6274e7", to: "#8752a3", deg: 20 },
-  ];
-
-  const randomGradient = useMemo(
-    () => colorGradient[Math.floor(Math.random() * 10)],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
-  );
-
   const form = useForm({
     initialValues: {
       name: "",
@@ -108,7 +98,6 @@ export default function CreatePage() {
 
     validate: {
       name: isNotEmpty(),
-      description: isNotEmpty(),
       limit_user: isNotEmpty(),
       period_start: isNotEmpty(),
       period_end: isNotEmpty(),
@@ -124,6 +113,7 @@ export default function CreatePage() {
         form.setFieldValue("status", "DRAFT");
       }
 
+      form.setFieldValue("description", content);
       const { newImageName } = await uploadToServer();
       form.setFieldValue("image", newImageName);
 
@@ -154,6 +144,10 @@ export default function CreatePage() {
       }
     }
   };
+
+  function handleClickEditEvent(event: Event) {
+    console.log(event);
+  }
 
   // Rich Text Editor.
   const [content, setContent] = useState<string>(``);
@@ -203,6 +197,16 @@ export default function CreatePage() {
       }
     });
   }
+
+  // card event
+
+  const convertDate = (date: string) => {
+    return dayjs(date).format("DD MMM BBBB");
+  };
+
+  const convertTime = (time: string) => {
+    return dayjs(time).format("HH:mm");
+  };
 
   return (
     <>
@@ -314,29 +318,37 @@ export default function CreatePage() {
               { maxWidth: "36rem", cols: 1, spacing: "sm" },
             ]}>
             {events.map((event, index) => (
-              <Card
-                key={index}
-                shadow="lg"
-                padding="sm"
-                h={200}
-                sx={(theme) => ({
-                  borderRadius: 15,
-                  backgroundImage: theme.fn.gradient(randomGradient),
-                  position: "relative",
-                })}>
-                <Badge
+              <CardEvent
+                image={`/uploads/${event.image}`}
+                title={event.name}
+                location="location"
+                date={`${convertDate(event.period_start)} - ${convertDate(
+                  event.period_end
+                )}`}
+                time={`${convertTime(event.period_start)} - ${convertTime(
+                  event.period_end
+                )}`}
+                key={index}>
+                <Box
+                  component="div"
                   sx={{
                     position: "absolute",
-                    bottom: 15,
+                    top: 15,
                     right: 15,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    gap: "0.5rem",
                   }}>
-                  {event.status}
-                </Badge>
-                <Title>{event.name}</Title>
-                <Text fz="md" lineClamp={4}>
-                  {event.description}
-                </Text>
-              </Card>
+                  <Badge>{event.status}</Badge>
+                  <ActionIcon
+                    variant="light"
+                    size="sm"
+                    onClick={() => handleClickEditEvent(event)}>
+                    <IconEdit color="gray" size="0.875rem" />
+                  </ActionIcon>
+                </Box>
+              </CardEvent>
             ))}
           </SimpleGrid>
         </Grid.Col>

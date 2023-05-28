@@ -50,6 +50,7 @@ export default async function handler(
         message: "Event created successfully",
       });
     } catch (error: any) {
+      console.log(error);
       res.status(500).json({
         status: "error",
         message: error.message,
