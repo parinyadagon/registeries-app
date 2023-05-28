@@ -213,11 +213,22 @@ export default function CreatePage() {
             <Button onClick={open} rightIcon={<IconPlus size="1rem" />}>
               Event
             </Button>
-            <Modal opened={opened} onClose={close} fullScreen>
+            <Modal
+              opened={opened}
+              onClose={close}
+              title="Create Event"
+              fullScreen
+              sx={{
+                "& .mantine-Modal-title": {
+                  fontSize: "1.5rem",
+                  fontWeight: 600,
+                  fontFamily: "Prompt, sans-serif",
+                },
+              }}>
               <Notifications />
 
               <Grid>
-                <Grid.Col xs={12} md={6}>
+                <Grid.Col xs={12}>
                   <Box component="form" maw={900} mx="auto">
                     <TextInput
                       label="Event Name"
@@ -284,11 +295,11 @@ export default function CreatePage() {
                   </Box>
                 </Grid.Col>
 
-                <Grid.Col xs={12} md={6}>
+                {/* <Grid.Col xs={12} md={6}>
                   <TypographyStylesProvider>
                     <div dangerouslySetInnerHTML={{ __html: content }}></div>
                   </TypographyStylesProvider>
-                </Grid.Col>
+                </Grid.Col> */}
               </Grid>
             </Modal>
           </Flex>
