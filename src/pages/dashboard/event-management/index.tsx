@@ -183,7 +183,10 @@ export default function CreatePage() {
       body: formData,
     });
 
-    console.log("response", response);
+    if (response.ok) {
+      const { files } = await response.json();
+      const newImagePreview = files.newFilename;
+    }
   };
 
   return (

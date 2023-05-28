@@ -22,6 +22,7 @@ const readFile = (
   }
 
   const form = new IncomingForm(options);
+
   return new Promise((resolve, reject) => {
     form.parse(req, (err, fields, files) => {
       if (err) return reject(err);
@@ -40,9 +41,10 @@ export default async function handler(
     await fs.mkdir(path.join(process.cwd(), "public", "uploads"));
   }
 
-  await readFile(req, true);
+  const { files } = await readFile(req, true);
 
   res.status(200).json({
     message: "success",
+    files: files.file,
   });
 }
