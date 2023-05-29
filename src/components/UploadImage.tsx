@@ -20,10 +20,12 @@ interface UploadImageProps extends Partial<DropzoneProps> {
     file: FileWithPath[] | undefined,
     preview: JSX.Element[]
   ) => void;
+  imagePreview?: JSX.Element[];
 }
 
 export default function UploadImage({
   onGetImage,
+  imagePreview,
   ...other
 }: UploadImageProps) {
   const [files, setFiles] = useState<FileWithPath[]>([]);
@@ -49,6 +51,10 @@ export default function UploadImage({
   useEffect(() => {
     onGetImage(files, previews);
   }, [files, onGetImage, previews]);
+
+  useEffect(() => {
+    if (imagePreview) setPreviews(imagePreview);
+  }, [imagePreview]);
 
   const theme = useMantineTheme();
   return (
