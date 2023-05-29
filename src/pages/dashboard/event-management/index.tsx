@@ -21,6 +21,7 @@ import {
   Text,
   Badge,
   TypographyStylesProvider,
+  Image,
   ActionIcon,
 } from "@mantine/core";
 import { DateTimePicker } from "@mantine/dates";
@@ -38,7 +39,7 @@ import UploadImage from "@/components/UploadImage";
 import CardEvent from "@/components/card/CardEvent";
 
 // Types
-import { Event } from "@/hooks/types/Event";
+import { Event, EventStatus } from "@/hooks/types/Event";
 
 // Libs
 import dayjs from "@/lib/dayjs";
@@ -84,14 +85,14 @@ export default function CreatePage() {
     });
   }, [email]);
 
-  const form = useForm({
+  const form = useForm<Event>({
     initialValues: {
       name: "",
       description: "",
       limit_user: 18,
       period_start: "",
       period_end: "",
-      status: "",
+      status: EventStatus.DRAFT,
       email: "",
       image: "",
     },
@@ -108,9 +109,9 @@ export default function CreatePage() {
     if (!form.validate().hasErrors) {
       form.setFieldValue("email", email);
       if (save_type === "PUBLISHED") {
-        form.setFieldValue("status", "PUBLISHED");
+        form.setFieldValue("status", EventStatus.PUBLISHED);
       } else {
-        form.setFieldValue("status", "DRAFT");
+        form.setFieldValue("status", EventStatus.DRAFT);
       }
 
       form.setFieldValue("description", content);
@@ -145,12 +146,9 @@ export default function CreatePage() {
     }
   };
 
-  function handleClickEditEvent(event: Event) {
-    console.log(event);
-  }
-
   // Rich Text Editor.
   const [content, setContent] = useState<string>(``);
+  const [oldContent, setOldContent] = useState<string>("");
 
   const handleGetContent = (content: string | undefined) => {
     if (content === undefined) return;
@@ -166,8 +164,11 @@ export default function CreatePage() {
   ) => {
     if (image === undefined) return;
     setImage(image);
-    setImagePreview(imagePreview);
+    // setImagePreview(imagePreview);
   };
+
+  // อัพโหลดไฟล์ รูปภาพ ไปยัง server และรับชื่อไฟล์ใหม่กลับมา
+  // bug ถ้าไม่มีการอัพโหลดรูปภาพ จะไม่สามารถสร้าง ได้รับชื่อไฟล์ใหม่กลับมา
 
   async function uploadToServer(): Promise<{
     newImageName: string;
@@ -186,7 +187,7 @@ export default function CreatePage() {
         method: "POST",
         body: formData,
       });
-
+      /* *************************************** BUG */
       if (response.ok) {
         const { files } = await response.json();
         const newImageName = files.newFilename;
@@ -200,12 +201,40 @@ export default function CreatePage() {
 
   // card event
 
-  const convertDate = (date: string) => {
+  const convertDate = (date: string | Date) => {
     return dayjs(date).format("DD MMM BBBB");
   };
 
-  const convertTime = (time: string) => {
+  const convertTime = (time: string | Date) => {
     return dayjs(time).format("HH:mm");
+  };
+
+  // edit event
+  function handleClickEditEvent(event: Event) {
+    form.setFieldValue("name", event.name);
+    form.setFieldValue("description", event.description);
+    form.setFieldValue("limit_user", event.limit_user);
+    form.setFieldValue("period_start", dayjs(event.period_start).toDate());
+    form.setFieldValue("period_end", dayjs(event.period_end).toDate());
+    form.setFieldValue("status", event.status);
+    setOldContent(event.description);
+    setImagePreview([
+      <Image
+        src={`/uploads/${event.image}`}
+        alt={event.name}
+        style={{ width: "100%", height: "100%" }}
+        key={event.image}
+      />,
+    ]);
+
+    open();
+  }
+
+  const handleCloseModal = () => {
+    form.reset();
+    setImagePreview([]);
+    setOldContent("");
+    close();
   };
 
   return (
@@ -219,7 +248,7 @@ export default function CreatePage() {
             </Button>
             <Modal
               opened={opened}
-              onClose={close}
+              onClose={handleCloseModal}
               title="Create Event"
               fullScreen
               sx={{
@@ -245,14 +274,20 @@ export default function CreatePage() {
                         padding: "0.75rem 0",
                       }}>
                       <Text>Image Cover</Text>
-                      <UploadImage onGetImage={handleGetImage} />
+                      <UploadImage
+                        onGetImage={handleGetImage}
+                        imagePreview={imagePreview}
+                      />
                     </Box>
                     <Box
                       sx={{
                         padding: "0.75rem 0",
                       }}>
                       <Text>Description</Text>
-                      <TextEditor onGetContent={handleGetContent} />
+                      <TextEditor
+                        onGetContent={handleGetContent}
+                        oldContent={oldContent}
+                      />
                     </Box>
 
                     <Flex justify="space-between" gap={10}>

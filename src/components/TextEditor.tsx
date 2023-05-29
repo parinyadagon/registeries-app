@@ -16,14 +16,12 @@ import { ActionIcon } from "@mantine/core";
 
 type TextEditorProps = {
   onGetContent: (content: string | undefined) => void;
-  alreadyContent?: string;
-  onSetContent?: (content: string | undefined) => string | undefined;
+  oldContent?: string;
 };
 
 export default function TextEditor({
   onGetContent,
-  alreadyContent,
-  onSetContent,
+  oldContent,
 }: TextEditorProps) {
   const [content, setContent] = useState<string | undefined>(``);
 
@@ -40,20 +38,15 @@ export default function TextEditor({
       Placeholder.configure({ placeholder: "Edit description here." }),
     ],
     content,
-    onUpdate({ editor }) {
-      setContent(editor.getHTML());
+    onCreate({ editor }) {
+      if (oldContent) editor.commands.setContent(oldContent);
+      else editor.commands.setContent("<p></p>");
     },
   });
 
   useEffect(() => {
-    onGetContent(content);
-  }, [content, onGetContent]);
-
-  useEffect(() => {
-    if (alreadyContent && editor) {
-      editor?.commands.setContent(alreadyContent);
-    }
-  }, [alreadyContent, editor]);
+    onGetContent(editor?.getHTML());
+  }, [editor, onGetContent]);
 
   function handleClickAddImage() {
     const url = window.prompt("Enter image URL");

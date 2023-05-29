@@ -2,8 +2,8 @@ export interface Event {
   name: string;
   description: string;
   limit_user: number;
-  period_start: string;
-  period_end: string;
+  period_start: string | Date;
+  period_end: string | Date;
   status: EventStatus;
   email?: string;
   image?: string;
