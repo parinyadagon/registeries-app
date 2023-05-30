@@ -39,14 +39,18 @@ export default function TextEditor({
     ],
     content,
     onCreate({ editor }) {
+      console.log("oldContent", oldContent);
       if (oldContent) editor.commands.setContent(oldContent);
       else editor.commands.setContent("<p></p>");
+    },
+    onUpdate({ editor }) {
+      setContent(editor.getHTML());
     },
   });
 
   useEffect(() => {
-    onGetContent(editor?.getHTML());
-  }, [editor, onGetContent]);
+    onGetContent(content);
+  }, [editor, onGetContent, content]);
 
   function handleClickAddImage() {
     const url = window.prompt("Enter image URL");

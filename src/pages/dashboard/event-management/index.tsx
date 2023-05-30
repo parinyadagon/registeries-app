@@ -56,6 +56,9 @@ export default function CreatePage() {
 
   const [events, setEvents] = useState<Event[]>([]);
 
+  const [content, setContent] = useState<string>(``);
+  const [oldContent, setOldContent] = useState<string>("");
+
   useEffectOnce(() => {
     return () => {
       Notifications.clean();
@@ -87,6 +90,7 @@ export default function CreatePage() {
 
   const form = useForm<Event>({
     initialValues: {
+      id: "",
       name: "",
       description: "",
       limit_user: 18,
@@ -116,7 +120,11 @@ export default function CreatePage() {
 
       form.setFieldValue("description", content);
       const { newImageName } = await uploadToServer();
-      form.setFieldValue("image", newImageName);
+      if (newImageName) {
+        form.setFieldValue("image", newImageName);
+      }
+
+      form.setFieldValue("description", content);
 
       const response = await fetchWithMethod(
         "/api/event/create",
@@ -147,8 +155,6 @@ export default function CreatePage() {
   };
 
   // Rich Text Editor.
-  const [content, setContent] = useState<string>(``);
-  const [oldContent, setOldContent] = useState<string>("");
 
   const handleGetContent = (content: string | undefined) => {
     if (content === undefined) return;
@@ -156,7 +162,7 @@ export default function CreatePage() {
   };
 
   // Image Upload
-  const [image, setImage] = useState<FileWithPath[] | undefined>();
+  const [image, setImage] = useState<FileWithPath[]>();
   const [imagePreview, setImagePreview] = useState<JSX.Element[]>([]);
   const handleGetImage = (
     image: FileWithPath[] | undefined,
@@ -167,34 +173,34 @@ export default function CreatePage() {
     // setImagePreview(imagePreview);
   };
 
-  // อัพโหลดไฟล์ รูปภาพ ไปยัง server และรับชื่อไฟล์ใหม่กลับมา
-  // bug ถ้าไม่มีการอัพโหลดรูปภาพ จะไม่สามารถสร้าง ได้รับชื่อไฟล์ใหม่กลับมา
-
   async function uploadToServer(): Promise<{
     newImageName: string;
     error: string | null;
   }> {
     const formData = new FormData();
     return new Promise(async (resolve, reject) => {
-      if (image === undefined) {
-        reject({ newImageName: "", error: null });
-      } else {
-        for (let file of image) {
-          if (file instanceof File) formData.append("file", file);
+      try {
+        if (image === undefined || image.length < 1) {
+          return resolve({ newImageName: "", error: null });
+        } else {
+          for (let file of image) {
+            if (file instanceof File) formData.append("file", file);
+          }
         }
-      }
-      const response = await fetch("/api/event/upload", {
-        method: "POST",
-        body: formData,
-      });
-      /* *************************************** BUG */
-      if (response.ok) {
-        const { files } = await response.json();
-        const newImageName = files.newFilename;
+        const response = await fetch("/api/event/upload", {
+          method: "POST",
+          body: formData,
+        });
+        if (response.ok) {
+          const { files } = await response.json();
+          const newImageName = files.newFilename;
 
-        resolve({ newImageName, error: null });
-      } else {
-        reject({ newImageName: "", error: "Upload failed" });
+          resolve({ newImageName, error: null });
+        } else {
+          return resolve({ newImageName: "", error: "Upload failed" });
+        }
+      } catch (error: any) {
+        return resolve({ newImageName: "", error: error });
       }
     });
   }
@@ -211,12 +217,13 @@ export default function CreatePage() {
 
   // edit event
   function handleClickEditEvent(event: Event) {
+    form.setFieldValue("id", event.id);
     form.setFieldValue("name", event.name);
-    form.setFieldValue("description", event.description);
     form.setFieldValue("limit_user", event.limit_user);
     form.setFieldValue("period_start", dayjs(event.period_start).toDate());
     form.setFieldValue("period_end", dayjs(event.period_end).toDate());
     form.setFieldValue("status", event.status);
+    form.setFieldValue("image", event.image);
     setOldContent(event.description);
     setImagePreview([
       <Image
