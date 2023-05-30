@@ -32,18 +32,35 @@ export default async function handler(
         return;
       }
 
-      await prisma.event.create({
-        data: {
-          name: event.name,
-          description: event.description,
-          limit_user: event.limit_user,
-          period_start: event.period_start,
-          period_end: event.period_end,
-          status: event.status,
-          user_id: user.id,
-          image: event.image || "",
-        },
-      });
+      if (!event.id) {
+        await prisma.event.create({
+          data: {
+            name: event.name,
+            description: event.description,
+            limit_user: event.limit_user,
+            period_start: event.period_start,
+            period_end: event.period_end,
+            status: event.status,
+            user_id: user.id,
+            image: event.image || "",
+          },
+        });
+      } else {
+        await prisma.event.update({
+          where: {
+            id: event.id,
+          },
+          data: {
+            name: event.name,
+            description: event.description,
+            limit_user: event.limit_user,
+            period_start: event.period_start,
+            period_end: event.period_end,
+            status: event.status,
+            image: event.image || "",
+          },
+        });
+      }
 
       res.status(200).json({
         status: "success",

@@ -1,4 +1,5 @@
 export interface Event {
+  id?: string;
   name: string;
   description: string;
   limit_user: number;
