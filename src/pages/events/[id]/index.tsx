@@ -15,6 +15,7 @@ import {
   Group,
   Flex,
   TypographyStylesProvider,
+  Button,
 } from "@mantine/core";
 import { IconCalendar, IconClock } from "@tabler/icons-react";
 
@@ -47,6 +48,8 @@ export default function EventDetails() {
   function convertTime(time: convertDateProp) {
     return dayjs(time).format("HH:mm");
   }
+
+  function handleRegister() {}
 
   return (
     <Container size="md">
@@ -88,6 +91,13 @@ export default function EventDetails() {
                     {convertTime(event?.period_end)}
                   </Text>
                 </Flex>
+              </Flex>
+              <Flex direction="row" justify="center">
+                <Button
+                  variant="gradient"
+                  gradient={{ from: "indigo", to: "cyan" }}>
+                  Register
+                </Button>
               </Flex>
             </Group>
           </Card>
