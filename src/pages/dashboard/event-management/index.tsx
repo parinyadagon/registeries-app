@@ -111,15 +111,6 @@ export default function CreatePage() {
     },
   });
 
-  const handleClickGG = () => {
-    console.log("email", email);
-    form.setValues({
-      email: email,
-    });
-
-    console.log("form", form.values);
-  };
-
   const handleClickSubmit = async (save_type: string) => {
     if (!form.validate().hasErrors) {
       if (save_type === "PUBLISHED") {
@@ -268,7 +259,6 @@ export default function CreatePage() {
   return (
     <>
       <Grid>
-        <Button onClick={handleClickGG}>gg</Button>
         <Grid.Col xs={12}>
           <Flex justify="start" align="center" direction="row" gap="md">
             <Title order={1}>Event Management</Title>
