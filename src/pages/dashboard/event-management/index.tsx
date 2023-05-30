@@ -65,7 +65,7 @@ export default function CreatePage() {
     };
   });
 
-  useEffect(() => {
+  function fetchEvents() {
     if (email === "") return;
     fetchWithMethod<{
       message: string;
@@ -86,7 +86,9 @@ export default function CreatePage() {
         });
       }
     });
-  }, [email]);
+  }
+
+  useEffect(fetchEvents, [email]);
 
   const form = useForm<Event>({
     initialValues: {
@@ -131,6 +133,10 @@ export default function CreatePage() {
         "POST",
         form.values
       );
+
+      if (response.status === 200) {
+        fetchEvents();
+      }
 
       if (response.status === 200) {
         close();
