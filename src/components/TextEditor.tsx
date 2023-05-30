@@ -39,7 +39,6 @@ export default function TextEditor({
     ],
     content,
     onCreate({ editor }) {
-      console.log("oldContent", oldContent);
       if (oldContent) editor.commands.setContent(oldContent);
       else editor.commands.setContent("<p></p>");
     },
