@@ -111,14 +111,23 @@ export default function CreatePage() {
     },
   });
 
+  const handleClickGG = () => {
+    console.log("email", email);
+    form.setValues({
+      email: email,
+    });
+
+    console.log("form", form.values);
+  };
+
   const handleClickSubmit = async (save_type: string) => {
     if (!form.validate().hasErrors) {
-      form.setFieldValue("email", email);
       if (save_type === "PUBLISHED") {
         form.setFieldValue("status", EventStatus.PUBLISHED);
       } else {
         form.setFieldValue("status", EventStatus.DRAFT);
       }
+      form.setFieldValue("email", email);
 
       form.setFieldValue("description", content);
       const { newImageName } = await uploadToServer();
@@ -223,6 +232,7 @@ export default function CreatePage() {
 
   // edit event
   function handleClickEditEvent(event: Event) {
+    form.setFieldValue("email", email);
     form.setFieldValue("id", event.id);
     form.setFieldValue("name", event.name);
     form.setFieldValue("limit_user", event.limit_user);
@@ -243,6 +253,11 @@ export default function CreatePage() {
     open();
   }
 
+  const handleOpenModal = () => {
+    open();
+    form.setFieldValue("email", email);
+  };
+
   const handleCloseModal = () => {
     form.reset();
     setImagePreview([]);
@@ -253,10 +268,13 @@ export default function CreatePage() {
   return (
     <>
       <Grid>
+        <Button onClick={handleClickGG}>gg</Button>
         <Grid.Col xs={12}>
           <Flex justify="start" align="center" direction="row" gap="md">
             <Title order={1}>Event Management</Title>
-            <Button onClick={open} rightIcon={<IconPlus size="1rem" />}>
+            <Button
+              onClick={handleOpenModal}
+              rightIcon={<IconPlus size="1rem" />}>
               Event
             </Button>
             <Modal
