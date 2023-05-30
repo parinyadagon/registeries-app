@@ -43,9 +43,11 @@ model User {
   email         String?   @unique
   emailVerified DateTime?
   image         String?
+  type          TYPE_USER @default(ORGANIZER)
   accounts      Account[]
   sessions      Session[]
   events        Event[]
+  status        Status[]
 }
 
 model VerificationToken {
@@ -69,9 +71,27 @@ model Event {
   updated_at   DateTime @updatedAt
   image        String
   user         User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  status_event Status[]
 }
 
 enum e_status {
   DRAFT
   PUBLISHED
+}
+
+enum TYPE_USER {
+  ORGANIZER
+  USER
+}
+
+model Status {
+  id         String   @id @default(cuid())
+  conmfirm   Boolean
+  user_id    String
+  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  event_id   String
+  event      Event    @relation(fields: [event_id], references: [id], onDelete: Cascade)
+  join_at    DateTime
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 }
