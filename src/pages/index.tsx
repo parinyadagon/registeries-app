@@ -1,8 +1,10 @@
 import { fetchWithMethod, useTitle } from "@/hooks";
 import { useEffectOnce } from "@/hooks/index";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import type { Event } from "@/hooks/types/Event";
 import dayjs from "@/lib/dayjs";
+
+import { useRouter } from "next/router";
 
 // Mantine
 import { SimpleGrid, Container } from "@mantine/core";
@@ -12,6 +14,7 @@ import CardEvent from "@/components/card/CardEvent";
 
 export default function Home() {
   useTitle("Home");
+  const router = useRouter();
 
   const [events, setEvents] = useState<Event[]>([]);
 
@@ -29,12 +32,16 @@ export default function Home() {
     });
   });
 
-  const convertDate = (date: string) => {
+  const convertDate = (date: string | Date) => {
     return dayjs(date).format("DD MMM BBBB");
   };
 
+  const convertTime = (time: string | Date) => {
+    return dayjs(time).format("HH:mm");
+  };
+
   const handleClickJoin = (event: Event) => {
-    console.log(event);
+    router.push(`/events/${event.id}`);
   };
 
   return (
@@ -50,14 +57,18 @@ export default function Home() {
           ]}>
           {events.map((event, index) => (
             <CardEvent
-              image="https://cdn.pixabay.com/photo/2023/05/21/07/47/horse-8008038_1280.jpg"
+              onClick={() => handleClickJoin(event)}
+              image={`/uploads/${event.image}`}
               title={event.name}
               date={`
               ${convertDate(event.period_start)} - 
               ${convertDate(event.period_end)}
               `}
+              time={`
+              ${convertTime(event.period_start)} - 
+              ${convertTime(event.period_end)}
+              `}
               location="location"
-              time="time"
               key={index}
             />
           ))}

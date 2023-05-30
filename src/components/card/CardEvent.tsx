@@ -21,6 +21,7 @@ type CardEventProps = {
   date: string;
   title: string;
   children?: React.ReactNode;
+  onClick?: () => void;
 };
 
 export default function CardEvent({
@@ -30,13 +31,25 @@ export default function CardEvent({
   date,
   title,
   children,
+  onClick,
 }: CardEventProps) {
   return (
     <Card
+      onClick={onClick}
       shadow="lg"
       padding="sm"
       sx={{
         borderRadius: 5,
+        cursor: "pointer",
+        transition: "all 0.2s ease",
+        "&:hover": {
+          transform: "translateY(-5px)",
+          boxShadow: "xl",
+        },
+        "&:active": {
+          transform: "translateY(0px)",
+          boxShadow: "lg",
+        },
       }}>
       <Card.Section>
         <AspectRatio ratio={21 / 9}>
