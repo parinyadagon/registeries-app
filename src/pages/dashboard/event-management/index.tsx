@@ -126,7 +126,7 @@ export default function CreatePage() {
         form.setFieldValue("image", newImageName);
       }
 
-      form.setFieldValue("description", content);
+      form.setFieldValue("description", content || oldContent);
 
       const response = await fetchWithMethod(
         "/api/event/create",
