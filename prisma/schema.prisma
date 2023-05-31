@@ -85,13 +85,18 @@ enum TYPE_USER {
 }
 
 model Status {
-  id         String   @id @default(cuid())
-  conmfirm   Boolean
-  user_id    String
-  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  event_id   String
-  event      Event    @relation(fields: [event_id], references: [id], onDelete: Cascade)
-  join_at    DateTime
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  id          String     @id @default(cuid())
+  user_id     String
+  event_id    String
+  join        JoinStatus
+  code_verify String
+  created_at  DateTime   @default(now())
+  updated_at  DateTime   @updatedAt
+  user        User       @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  event       Event      @relation(fields: [event_id], references: [id], onDelete: Cascade)
+}
+
+enum JoinStatus {
+  JOIN
+  CANCEL
 }
