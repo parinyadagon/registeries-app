@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { fetchWithMethod } from "@/hooks";
 import type { Event } from "@/hooks/types/Event";
 import dayjs from "@/lib/dayjs";
@@ -16,12 +16,16 @@ import {
   Flex,
   TypographyStylesProvider,
   Button,
+  Modal,
+  TextInput,
 } from "@mantine/core";
 import { IconCalendar, IconClock } from "@tabler/icons-react";
+import { useDisclosure } from "@mantine/hooks";
 
 export default function EventDetails() {
   const router = useRouter();
   const [event, setEvent] = useState<Event>();
+  const [opened, { open, close }] = useDisclosure(false);
 
   function fetchEventById() {
     fetchWithMethod<{
@@ -49,7 +53,9 @@ export default function EventDetails() {
     return dayjs(time).format("HH:mm");
   }
 
-  function handleRegister() {}
+  function handleRegister() {
+    open();
+  }
 
   return (
     <Container size="md">
@@ -95,6 +101,7 @@ export default function EventDetails() {
               <Flex direction="row" justify="center">
                 <Button
                   variant="gradient"
+                  onClick={handleRegister}
                   gradient={{ from: "indigo", to: "cyan" }}>
                   Register
                 </Button>
@@ -115,6 +122,37 @@ export default function EventDetails() {
           </Card>
         </Grid.Col>
       </Grid>
+      <DialogRegister event={event} opened={opened} close={close} />
     </Container>
+  );
+}
+
+interface DialogRegisterProps {
+  event?: Event;
+  opened: boolean;
+  close: () => void;
+}
+
+function DialogRegister({ event, opened, close }: DialogRegisterProps) {
+  return (
+    <>
+      <Modal
+        opened={opened}
+        onClose={close}
+        title="ลงทะเบียน"
+        sx={{
+          ".mantine-Modal-title": {
+            fontFamily: "prompt",
+          },
+        }}>
+        <TextInput label="Email" placeholder="First input" />
+        <TextInput
+          data-autofocus
+          label="Input with initial focus"
+          placeholder="It has data-autofocus attribute"
+          mt="md"
+        />
+      </Modal>
+    </>
   );
 }
