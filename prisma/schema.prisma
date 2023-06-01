@@ -70,8 +70,8 @@ model Event {
   created_at   DateTime @default(now())
   updated_at   DateTime @updatedAt
   image        String
-  user         User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
   status_event Status[]
+  user         User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
 }
 
 enum e_status {
@@ -79,17 +79,13 @@ enum e_status {
   PUBLISHED
 }
 
-enum TYPE_USER {
-  ORGANIZER
-  USER
-}
-
 model Status {
   id          String     @id @default(cuid())
   user_id     String
   event_id    String
-  join        JoinStatus
+  join_status JoinStatus
   code_verify String
+  verify      Boolean    @default(false)
   created_at  DateTime   @default(now())
   updated_at  DateTime   @updatedAt
   user        User       @relation(fields: [user_id], references: [id], onDelete: Cascade)
@@ -97,6 +93,11 @@ model Status {
 }
 
 enum JoinStatus {
-  JOIN
-  CANCEL
+  JOINED
+  NOT_JOINED
+}
+
+enum TYPE_USER {
+  ORGANIZER
+  USER
 }
