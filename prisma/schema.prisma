@@ -83,7 +83,7 @@ model Status {
   id          String     @id @default(cuid())
   user_id     String
   event_id    String
-  join_status JoinStatus
+  status      JoinStatus @default(NOT_ATTEND)
   code_verify String
   verify      Boolean    @default(false)
   created_at  DateTime   @default(now())
@@ -93,8 +93,8 @@ model Status {
 }
 
 enum JoinStatus {
-  JOINED
-  NOT_JOINED
+  ATTEND
+  NOT_ATTEND
 }
 
 enum TYPE_USER {
