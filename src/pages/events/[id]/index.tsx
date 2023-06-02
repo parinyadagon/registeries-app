@@ -1,9 +1,11 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { fetchWithMethod } from "@/hooks";
-import type { Event } from "@/hooks/types/Event";
+import type { Event, RegisterData } from "@/hooks/types/Event";
 import dayjs from "@/lib/dayjs";
 import { useTitle } from "@/hooks";
+
+import { useForm } from "@mantine/form";
 
 import {
   Container,
@@ -53,8 +55,23 @@ export default function EventDetails() {
     return dayjs(time).format("HH:mm");
   }
 
-  function handleRegister() {
+  function handleOpenDialog() {
     open();
+  }
+
+  function handleRegister(regisData: RegisterData) {
+    fetchWithMethod<{
+      message: string;
+      status: string;
+    }>(`/api/event/${router.query.id}/register`, "POST", regisData).then(
+      (response) => {
+        if (response.status === 200) {
+          if (response.data !== null) {
+            alert(response.data.message);
+          }
+        }
+      }
+    );
   }
 
   return (
@@ -64,7 +81,13 @@ export default function EventDetails() {
           <Card>
             <Card.Section>
               <AspectRatio ratio={21 / 9}>
-                <Image src={`/uploads/${event?.image}`} alt="gg" />
+                {event?.image && (
+                  <Image
+                    src={`/uploads/${event?.image}`}
+                    withPlaceholder
+                    alt="gg"
+                  />
+                )}
               </AspectRatio>
             </Card.Section>
 
@@ -101,7 +124,7 @@ export default function EventDetails() {
               <Flex direction="row" justify="center">
                 <Button
                   variant="gradient"
-                  onClick={handleRegister}
+                  onClick={handleOpenDialog}
                   gradient={{ from: "indigo", to: "cyan" }}>
                   Register
                 </Button>
@@ -122,7 +145,12 @@ export default function EventDetails() {
           </Card>
         </Grid.Col>
       </Grid>
-      <DialogRegister event={event} opened={opened} close={close} />
+      <DialogRegister
+        event={event}
+        opened={opened}
+        close={close}
+        onSubmit={handleRegister}
+      />
     </Container>
   );
 }
@@ -131,27 +159,70 @@ interface DialogRegisterProps {
   event?: Event;
   opened: boolean;
   close: () => void;
+  onSubmit: (regisData: RegisterData) => void;
 }
 
-function DialogRegister({ event, opened, close }: DialogRegisterProps) {
+function DialogRegister({
+  event,
+  opened,
+  close,
+  onSubmit,
+}: DialogRegisterProps) {
+  const form = useForm<RegisterData>({
+    initialValues: {
+      name: "",
+      email: "",
+    },
+
+    validate: {
+      name: (value) => (value ? null : "กรุณากรอกชื่อ-นามสกุล"),
+      email: (value) => (/^\S+@\S+$/.test(value) ? null : "กรุณากรอกอีเมล"),
+    },
+  });
+
+  function handleCloseDialog() {
+    close();
+    form.reset();
+  }
+
+  function handleSubmit() {
+    if (form.validate().hasErrors) return;
+    onSubmit(form.values);
+    handleCloseDialog();
+    form.reset();
+  }
+
   return (
     <>
       <Modal
         opened={opened}
-        onClose={close}
+        onClose={handleCloseDialog}
         title="ลงทะเบียน"
         sx={{
           ".mantine-Modal-title": {
             fontFamily: "prompt",
           },
         }}>
-        <TextInput label="Email" placeholder="First input" />
         <TextInput
           data-autofocus
-          label="Input with initial focus"
-          placeholder="It has data-autofocus attribute"
-          mt="md"
+          label="ชื่อ-นามสกุล"
+          placeholder="กรุณากรอกชื่อ-นามสกุล"
+          {...form.getInputProps("name")}
         />
+        <TextInput
+          label="อีเมล"
+          placeholder="your@mail.com"
+          mt="md"
+          {...form.getInputProps("email")}
+        />
+        <Flex justify="end" gap={8} mt="sm">
+          <Button color="red" variant="outline" onClick={handleCloseDialog}>
+            <Text>ยกเลิก</Text>
+          </Button>
+          <Button onClick={handleSubmit}>
+            <Text>บันทึก</Text>
+          </Button>
+        </Flex>
       </Modal>
     </>
   );

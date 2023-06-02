@@ -14,3 +14,8 @@ export enum EventStatus {
   DRAFT = "DRAFT",
   PUBLISHED = "PUBLISHED",
 }
+
+export interface RegisterData {
+  name: string;
+  email: string;
+}
