@@ -65,10 +65,8 @@ export default function EventDetails() {
       status: string;
     }>(`/api/event/${router.query.id}/register`, "POST", regisData).then(
       (response) => {
-        if (response.status === 200) {
-          if (response.data !== null) {
-            alert(response.data.message);
-          }
+        if (response.data !== null) {
+          alert(response.data.message);
         }
       }
     );

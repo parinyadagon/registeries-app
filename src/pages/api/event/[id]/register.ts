@@ -52,7 +52,6 @@ export default async function handler(
           create: {
             event_id: id as string,
             code_verify: code,
-            join_status: "NOT_JOINED",
           },
         },
       },
@@ -62,7 +61,6 @@ export default async function handler(
       data: {
         event_id: id as string,
         code_verify: code,
-        join_status: "NOT_JOINED",
         user_id: user.id,
       },
     });
