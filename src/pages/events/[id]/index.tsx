@@ -20,6 +20,7 @@ import {
   Button,
   Modal,
   TextInput,
+  Box,
 } from "@mantine/core";
 import { IconCalendar, IconClock } from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
@@ -73,7 +74,13 @@ export default function EventDetails() {
   }
 
   return (
-    <Container size="md">
+    <Container
+      sx={{
+        "@media (max-width: 30em)": {
+          padding: "0",
+        },
+      }}
+      size="md">
       <Grid>
         <Grid.Col span={12}>
           <Card>
@@ -89,14 +96,17 @@ export default function EventDetails() {
               </AspectRatio>
             </Card.Section>
 
-            <Group position="apart" p="10px">
-              <Flex justify="center" direction="column" gap={2}>
+            <Flex
+              justify="space-between"
+              direction={{ base: "column", md: "row" }}
+              pt="10px">
+              <Box>
                 <Flex justify="start">
                   <Text
                     fz={{
-                      xs: "md",
-                      sm: "lg",
-                      md: "26px",
+                      base: "1.5rem",
+                      sm: "1.8rem",
+                      md: "2rem",
                     }}
                     fw="bold">
                     {event?.name}
@@ -118,22 +128,30 @@ export default function EventDetails() {
                     {convertTime(event?.period_end)}
                   </Text>
                 </Flex>
-              </Flex>
-              <Flex direction="row" justify="center">
-                <Button
-                  variant="gradient"
-                  onClick={handleOpenDialog}
-                  gradient={{ from: "indigo", to: "cyan" }}>
-                  Register
-                </Button>
-              </Flex>
-            </Group>
+              </Box>
+              <Box
+                sx={{
+                  alignSelf: "flex-end",
+                }}>
+                <Flex direction="row" justify="flex-end">
+                  <Button
+                    variant="gradient"
+                    onClick={handleOpenDialog}
+                    gradient={{ from: "indigo", to: "cyan" }}>
+                    ลงทะเบียน
+                  </Button>
+                </Flex>
+              </Box>
+            </Flex>
           </Card>
         </Grid.Col>
         <Grid.Col span={12}>
           <Card>
-            <Text fz="lg" fw="bold">
-              Description
+            <Text
+              fz={{ base: "1.2em", sm: "1.4em", md: "1.6em" }}
+              fw="bold"
+              color="blue">
+              รายละเอียด
             </Text>
             <TypographyStylesProvider>
               <Text
@@ -143,29 +161,18 @@ export default function EventDetails() {
           </Card>
         </Grid.Col>
       </Grid>
-      <DialogRegister
-        event={event}
-        opened={opened}
-        close={close}
-        onSubmit={handleRegister}
-      />
+      <DialogRegister opened={opened} close={close} onSubmit={handleRegister} />
     </Container>
   );
 }
 
 interface DialogRegisterProps {
-  event?: Event;
   opened: boolean;
   close: () => void;
   onSubmit: (regisData: RegisterData) => void;
 }
 
-function DialogRegister({
-  event,
-  opened,
-  close,
-  onSubmit,
-}: DialogRegisterProps) {
+function DialogRegister({ opened, close, onSubmit }: DialogRegisterProps) {
   const form = useForm<RegisterData>({
     initialValues: {
       name: "",
@@ -205,12 +212,14 @@ function DialogRegister({
           data-autofocus
           label="ชื่อ-นามสกุล"
           placeholder="กรุณากรอกชื่อ-นามสกุล"
+          withAsterisk
           {...form.getInputProps("name")}
         />
         <TextInput
           label="อีเมล"
           placeholder="your@mail.com"
           mt="md"
+          withAsterisk
           {...form.getInputProps("email")}
         />
         <Flex justify="end" gap={8} mt="sm">
