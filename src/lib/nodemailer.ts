@@ -11,30 +11,36 @@ export interface TransportOptions {
   };
 }
 
-export default function sender() {
+export default function sender(
+  code: string = "F23VGG",
+  email: string = "parinyadragon34@gmail.com"
+) {
   const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
       user: "dagonparinya@gmail.com",
-      pass: "",
+      pass: "pqrqxlnjzpagqysg",
     },
   });
 
   const mailConfiguration = {
     from: "noreply@gmail.com",
-    to: "parinyadragon34@gmail.com",
-    subject: "Email Verification",
+    to: email,
+    subject: "รายละเอียดการเข้าร่วมกิจกรรม",
 
-    // This would be the text of email body
-    text: `Hi! There, You have recently visited 
-           our website and entered your email.
-           Please follow the given link to verify your email
-           http://localhost:5000/verify/ 
-           Thanks`,
+    html: `
+    <div>
+      <div>
+        <h3>ใช้รหัสนี้ในการเข้าร่วมกิจกรรม</h3>
+      </div>
+      <div>
+        <h1>${code}</h1>
+      </div>
+    </div>
+    `,
   };
 
   transporter.sendMail(mailConfiguration, (error, info) => {
     if (error) throw error;
-    console.log("Email Sent Successfully", info);
   });
 }

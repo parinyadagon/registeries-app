@@ -30,6 +30,14 @@ export default function EventDetails() {
   const [event, setEvent] = useState<Event>();
   const [opened, { open, close }] = useDisclosure(false);
 
+  const [
+    stateDialogDetail,
+    { open: openDialogDetail, close: closeDialogDetail },
+  ] = useDisclosure(false);
+
+  const [messageRegisterComplete, setMessageRegisterComplete] =
+    useState<string>("");
+
   function fetchEventById() {
     fetchWithMethod<{
       message: string;
@@ -66,8 +74,10 @@ export default function EventDetails() {
       status: string;
     }>(`/api/event/${router.query.id}/register`, "POST", regisData).then(
       (response) => {
+        console.log("response", response);
         if (response.data !== null) {
-          alert(response.data.message);
+          openDialogDetail();
+          setMessageRegisterComplete(response.data.message);
         }
       }
     );
@@ -162,6 +172,11 @@ export default function EventDetails() {
         </Grid.Col>
       </Grid>
       <DialogRegister opened={opened} close={close} onSubmit={handleRegister} />
+      <DialogDetail
+        opened={stateDialogDetail}
+        close={closeDialogDetail}
+        message={messageRegisterComplete}
+      />
     </Container>
   );
 }
@@ -232,5 +247,32 @@ function DialogRegister({ opened, close, onSubmit }: DialogRegisterProps) {
         </Flex>
       </Modal>
     </>
+  );
+}
+
+type DialogDetailProps = {
+  opened: boolean;
+  close: () => void;
+  message: string;
+};
+
+function DialogDetail({ opened, close, message }: DialogDetailProps) {
+  return (
+    <Modal opened={opened} onClose={close} withCloseButton={false}>
+      <Text align="center" fz={{ base: "1.4rem", lg: "1.2rem" }} my={30}>
+        {message}
+      </Text>
+      <Flex direction="row" justify="center">
+        <Button
+          size="sm"
+          radius="xl"
+          sx={{
+            width: "10rem",
+          }}
+          onClick={() => close()}>
+          ปิด
+        </Button>
+      </Flex>
+    </Modal>
   );
 }

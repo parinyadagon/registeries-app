@@ -3,6 +3,8 @@ import prisma from "@/lib/prisma";
 
 import type { RegisterData } from "@/hooks/types/Event";
 
+import sender from "@/lib/nodemailer";
+
 const generateConfirmationCode = (): string => {
   const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
   let code = "";
@@ -56,6 +58,8 @@ export default async function handler(
         },
       },
     });
+
+    sender(code, email);
   } else {
     await prisma.status.create({
       data: {
@@ -68,7 +72,6 @@ export default async function handler(
 
   res.status(200).json({
     status: "success",
-    message: "ลงทะเบียนเสร็จเรียบร้อยแล้ว",
-    data: { code },
+    message: "ลงทะเบียนสำเร็จ ระบบได้ส่งรหัสสำหรับเข้าร่วมกิจกรรมที่อีเมล",
   });
 }
