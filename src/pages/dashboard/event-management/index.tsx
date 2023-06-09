@@ -256,6 +256,14 @@ export default function CreatePage() {
     close();
   };
 
+  if (!session) {
+    return (
+      <>
+        <>Access Denied</>
+      </>
+    );
+  }
+
   return (
     <>
       <Grid>
