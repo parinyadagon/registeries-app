@@ -8,7 +8,11 @@ export default async function handler(
 ) {
   if (req.method == "GET") {
     try {
-      const events = await prisma.event.findMany();
+      const events = await prisma.event.findMany({
+        where: {
+          status: "PUBLISHED",
+        },
+      });
       res.status(200).json({
         status: "success",
         message: "Events retrieved successfully",
