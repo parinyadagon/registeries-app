@@ -34,6 +34,7 @@ export default function Dashboard() {
 
   const [events, setEvents] = useState<Event[]>([]);
   const [event, setEvent] = useState<Overview>();
+  const [selectedEvent, setSelectedEvent] = useState<string>("");
   const [progress, setProgress] = useState<
     {
       label: string;
@@ -103,9 +104,6 @@ export default function Dashboard() {
   }
 
   useEffect(fetchEvents, [email]);
-  useEffect(() => {
-    console.log("Event", event);
-  }, [event]);
 
   const convertDate = (date: string | Date) => {
     return dayjs(date).format("DD MMM BBBB");
@@ -118,6 +116,7 @@ export default function Dashboard() {
   type RequireEvent = Required<Event>;
   function handleClickEvent(event: RequireEvent) {
     fetchEventById(event.id);
+    setSelectedEvent(event.id);
   }
 
   if (status === "unauthenticated") {
@@ -146,6 +145,7 @@ export default function Dashboard() {
                       onClick={() => handleClickEvent(event as RequireEvent)}
                       image={`/uploads/${event.image}`}
                       title={event.name}
+                      bg={event.id === selectedEvent ? "blue" : ""}
                       key={index}
                     />
                   </Box>

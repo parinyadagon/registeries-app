@@ -22,6 +22,7 @@ type CardEventProps = {
   title: string;
   children?: React.ReactNode;
   onClick?: () => void;
+  bg?: string;
 };
 
 export default function CardEvent({
@@ -31,13 +32,14 @@ export default function CardEvent({
   date,
   title,
   children,
+  bg = "",
   onClick,
 }: CardEventProps) {
   return (
     <Card
       onClick={onClick}
       shadow="lg"
-      padding="sm"
+      bg={bg}
       sx={{
         borderRadius: 5,
         cursor: "pointer",
