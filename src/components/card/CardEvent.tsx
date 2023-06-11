@@ -16,9 +16,9 @@ import { IconCalendar, IconClock, IconMapPin } from "@tabler/icons-react";
 
 type CardEventProps = {
   image: string;
-  time: string;
-  location: string;
-  date: string;
+  time?: string;
+  location?: string;
+  date?: string;
   title: string;
   children?: React.ReactNode;
   onClick?: () => void;
@@ -63,18 +63,24 @@ export default function CardEvent({
               {title}
             </Text>
           </Flex>
-          <Flex justify="start" align="center" gap="sm">
-            <IconCalendar size={20} />
-            <Text size="sm">{date}</Text>
-          </Flex>
-          <Flex justify="start" align="center" gap="sm">
-            <IconClock size={20} />
-            <Text size="sm">{time}</Text>
-          </Flex>
-          <Flex justify="start" align="center" gap="sm">
-            <IconMapPin size={20} />
-            <Text size="sm">{location}</Text>
-          </Flex>
+          {date && (
+            <Flex justify="start" align="center" gap="sm">
+              <IconCalendar size={20} />
+              <Text size="sm">{date}</Text>
+            </Flex>
+          )}
+          {time && (
+            <Flex justify="start" align="center" gap="sm">
+              <IconClock size={20} />
+              <Text size="sm">{time}</Text>
+            </Flex>
+          )}
+          {location && (
+            <Flex justify="start" align="center" gap="sm">
+              <IconMapPin size={20} />
+              <Text size="sm">{location}</Text>
+            </Flex>
+          )}
         </Flex>
       </Group>
       {children}
