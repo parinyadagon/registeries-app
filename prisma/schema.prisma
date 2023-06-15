@@ -84,7 +84,7 @@ model Status {
   user_id     String
   event_id    String
   status      JoinStatus @default(NOT_ATTEND)
-  code_verify String
+  code_verify String     @unique
   verify      Boolean    @default(false)
   created_at  DateTime   @default(now())
   updated_at  DateTime   @updatedAt
