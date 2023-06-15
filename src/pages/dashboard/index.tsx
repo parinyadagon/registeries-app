@@ -3,6 +3,8 @@ import { useRouter } from "next/router";
 
 import { useSession } from "next-auth/react";
 
+import generateQrcode from "@/lib/qrcdoe";
+
 // mantine
 import {
   Grid,
@@ -11,6 +13,7 @@ import {
   Paper,
   ScrollArea,
   Flex,
+  Image,
   Center,
 } from "@mantine/core";
 import { useEffect, useMemo, useState } from "react";
@@ -45,6 +48,7 @@ export default function Dashboard() {
     }[]
   >([]);
   const [dataTable, setDataTable] = useState<listUser[]>([]);
+  const [qrcode, setQrcode] = useState<string>("");
 
   const email: string = useMemo(
     () => session?.user?.email || "",
@@ -114,9 +118,10 @@ export default function Dashboard() {
   };
 
   type RequireEvent = Required<Event>;
-  function handleClickEvent(event: RequireEvent) {
+  async function handleClickEvent(event: RequireEvent) {
     fetchEventById(event.id);
     setSelectedEvent(event.id);
+    setQrcode(await generateQrcode(event.id));
   }
 
   if (status === "unauthenticated") {
@@ -156,16 +161,24 @@ export default function Dashboard() {
         </Grid.Col>
         {event ? (
           <>
-            <Grid.Col xs={12} xl={5}>
+            <Grid.Col xs={12} xl={3}>
               <Flex direction="column" gap={20}>
                 <StatsSegments
                   total={`${event?.listUsers.length} คน`}
                   data={progress}
                 />
-                <Paper p="10px" radius="md" withBorder></Paper>
+                <Paper p="10px" radius="md" withBorder>
+                  <Image
+                    maw={350}
+                    mx="auto"
+                    radius="md"
+                    src={qrcode}
+                    alt="Random image"
+                  />
+                </Paper>
               </Flex>
             </Grid.Col>
-            <Grid.Col xs={12} xl={5}>
+            <Grid.Col xs={12} xl={7}>
               <Paper p="10px" radius="md" withBorder>
                 <Text>รายชื่อผู้ลงทะเบียนเข้าร่วมกิจกรรม</Text>
                 <TableScrollArea data={dataTable} />
