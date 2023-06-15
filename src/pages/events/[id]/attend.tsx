@@ -1,5 +1,12 @@
+import { fetchWithMethod } from "@/hooks";
+import { useRouter } from "next/router";
+import { useState } from "react";
+
+import { useDisclosure } from "@mantine/hooks";
+
 import {
-  Container,
+  Modal,
+  Group,
   TextInput,
   Card,
   Text,
@@ -10,6 +17,25 @@ import {
 } from "@mantine/core";
 
 export default function Attend() {
+  const router = useRouter();
+
+  const [code, setCode] = useState<string>("");
+  const [textSuccess, setTextSuccess] = useState<string>("");
+  const [opened, { open, close }] = useDisclosure(false);
+
+  function handleClickSend() {
+    if (code)
+      fetchWithMethod<{
+        message: string;
+        status: string;
+      }>(`/api/event/${router.query.id}/attend`, "POST", { code }).then(
+        (res) => {
+          if (res.data) setTextSuccess(res.data?.message);
+          open();
+        }
+      );
+  }
+
   return (
     <Center h="85vh">
       <Box w={{ base: "25rem" }}>
@@ -29,12 +55,18 @@ export default function Attend() {
               w={{ base: "90%" }}
               placeholder="กรอกรหัสที่นี้"
               size="lg"
+              onChange={(e) => setCode(e.target.value)}
             />
           </Flex>
           <Flex direction="row" justify="center" mt="lg">
-            <Button>เข้าร่วม</Button>
+            <Button onClick={handleClickSend}>เข้าร่วม</Button>
           </Flex>
         </Card>
+        <Modal opened={opened} onClose={close} withCloseButton={false}>
+          <Text align="center" fz={{ base: "1.5rem", lg: "2rem" }}>
+            {textSuccess}
+          </Text>
+        </Modal>
       </Box>
     </Center>
   );
