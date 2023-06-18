@@ -63,10 +63,10 @@ export default function TableScrollArea({ data }: TableScrollAreaProps) {
       <Table miw={700}>
         <thead className={cx(classes.header, { [classes.scrolled]: scrolled })}>
           <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Status</th>
-            <th>Code</th>
+            <th>ชื่อ</th>
+            <th>อีเมล</th>
+            <th>สถานะ</th>
+            <th>รหัสยืนยัน</th>
           </tr>
         </thead>
         <tbody>{rows}</tbody>

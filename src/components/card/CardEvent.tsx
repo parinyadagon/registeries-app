@@ -11,6 +11,7 @@ import {
   Group,
   Box,
   Flex,
+  Tooltip,
 } from "@mantine/core";
 import { IconCalendar, IconClock, IconMapPin } from "@tabler/icons-react";
 
@@ -61,9 +62,11 @@ export default function CardEvent({
       <Group position="apart" pt="sm">
         <Flex justify="center" direction="column">
           <Flex justify="start" align="center" gap="sm">
-            <Text size="xl" fw="bold" lineClamp={1}>
-              {title}
-            </Text>
+            <Tooltip label={title} withArrow arrowSize={6}>
+              <Text size="xl" fw="bold" lineClamp={1}>
+                {title}
+              </Text>
+            </Tooltip>
           </Flex>
           {date && (
             <Flex justify="start" align="center" gap="sm">

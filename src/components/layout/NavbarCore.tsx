@@ -88,8 +88,8 @@ const mockdata = [
     icon: IconGauge,
     initiallyOpened: true,
     links: [
-      { label: "Overview", link: "/dashboard" },
-      { label: "Event Management", link: "/dashboard/event-management" },
+      { label: "ภาพรวม", link: "/dashboard" },
+      { label: "จัดการกิจกรรม", link: "/dashboard/event-management" },
     ],
   },
 ];

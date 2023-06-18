@@ -132,11 +132,6 @@ export default function CreatePage() {
 
   async function handleClickSubmit(save_type: string) {
     if (!form.validate().hasErrors) {
-      if (save_type === "PUBLISHED") {
-        form.setFieldValue("status", EventStatus.PUBLISHED);
-      } else {
-        form.setFieldValue("status", EventStatus.DRAFT);
-      }
       form.setFieldValue("email", email);
       // form.setFieldValue("image", imagePath);
 
@@ -150,7 +145,8 @@ export default function CreatePage() {
         ...form.values,
         ...{
           description: content || oldContent,
-          image: newImageName,
+          image: newImageName || form.values.image,
+          status: save_type || form.values.status,
         },
       };
 
@@ -411,10 +407,13 @@ export default function CreatePage() {
                             backgroundColor: "#bfbfbf",
                           },
                         }}
-                        onClick={() => handleClickSubmit("DRAFT")}>
+                        onClick={() => handleClickSubmit(EventStatus.DRAFT)}>
                         DRAFT
                       </Button>
-                      <Button onClick={() => handleClickSubmit("PUBLISHED")}>
+                      <Button
+                        onClick={() =>
+                          handleClickSubmit(EventStatus.PUBLISHED)
+                        }>
                         PUBLISH
                       </Button>
                     </Group>
