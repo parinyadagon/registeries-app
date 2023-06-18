@@ -35,6 +35,7 @@ import {
 import { Notifications } from "@mantine/notifications";
 import { useDisclosure } from "@mantine/hooks";
 import { FileWithPath } from "@mantine/dropzone";
+import { modals } from "@mantine/modals";
 
 // Hooks
 import { fetchWithMethod } from "@/hooks";
@@ -49,6 +50,7 @@ import { Event, EventStatus } from "@/hooks/types/Event";
 
 // Libs
 import dayjs from "@/lib/dayjs";
+import { IconTrash } from "@tabler/icons-react";
 
 export default function CreatePage() {
   useTitle("Event Management");
@@ -64,8 +66,6 @@ export default function CreatePage() {
 
   const [content, setContent] = useState<string>(``);
   const [oldContent, setOldContent] = useState<string>("");
-
-  const [imagePath, setImagePath] = useState<string>("");
 
   useEffectOnce(() => {
     return () => {
@@ -121,35 +121,14 @@ export default function CreatePage() {
     },
   });
 
-  function waitUntil(
-    condition: () => boolean,
-    interval: number
-  ): Promise<void> {
-    return new Promise<void>((resolve) => {
-      const checkCondition = async () => {
-        if (await condition()) {
-          resolve();
-        } else {
-          setTimeout(checkCondition, interval);
-        }
-      };
-
-      checkCondition();
+  function handleDeleteEvent(eventId: string) {
+    fetchWithMethod<{
+      status: string;
+      message: string;
+    }>(`/api/event/${eventId}`, "DELETE").then(() => {
+      fetchEvents();
     });
   }
-
-  function callFunctionTwice(func: () => void) {
-    func();
-    func();
-  }
-
-  // async function preSubmit() {
-  //   const { newImageName } = await uploadToServer();
-  //   if (newImageName) {
-  //     setImagePath(newImageName);
-  //     form.setFieldValue("image", newImageName);
-  //   }
-  // }
 
   async function handleClickSubmit(save_type: string) {
     if (!form.validate().hasErrors) {
@@ -304,6 +283,25 @@ export default function CreatePage() {
     close();
   };
 
+  const handleOpenModalDelete = (event: Event) =>
+    modals.openConfirmModal({
+      // title: "Please confirm your action",
+      centered: true,
+      children: (
+        <Text size="md">
+          ต้องการลบกิจกรรม{" "}
+          <Text span c="blue" fz="lg" fw="md" inherit>
+            {event.name}{" "}
+          </Text>
+          ใช่หรือไม่
+        </Text>
+      ),
+      labels: { confirm: "ตกลง", cancel: "ยกเลิก" },
+      confirmProps: { color: "red" },
+      onCancel: () => console.log("Cancel"),
+      onConfirm: () => handleDeleteEvent(event.id || ""),
+    });
+
   if (!session) {
     return (
       <>
@@ -395,6 +393,17 @@ export default function CreatePage() {
                     />
 
                     <Group position="right" mt="md">
+                      {/* <Button
+                        onClick={() => handleDeleteEvent(event.id)}
+                        bg="red"
+                        mr="auto"
+                        sx={{
+                          ":hover": {
+                            backgroundColor: "#FAA0A0",
+                          },
+                        }}>
+                        ลบ
+                      </Button> */}
                       <Button
                         bg="gray"
                         sx={{
@@ -459,6 +468,13 @@ export default function CreatePage() {
                     size="sm"
                     onClick={() => handleClickEditEvent(event)}>
                     <IconEdit color="gray" size="0.875rem" />
+                  </ActionIcon>
+                  <ActionIcon
+                    variant="light"
+                    bg="red"
+                    size="sm"
+                    onClick={() => handleOpenModalDelete(event)}>
+                    <IconTrash color="gray" size="0.875rem" />
                   </ActionIcon>
                 </Box>
               </CardEvent>

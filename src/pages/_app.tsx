@@ -2,6 +2,7 @@ import "@/styles/globals.css";
 import type { AppProps } from "next/app";
 
 import { MantineProvider } from "@mantine/core";
+import { ModalsProvider } from "@mantine/modals";
 
 import { SessionProvider } from "next-auth/react";
 
@@ -15,11 +16,13 @@ export default function App({ Component, pageProps }: AppProps) {
     <>
       <SessionProvider session={pageProps.session}>
         <MantineProvider theme={{ colorScheme: "light", fontFamily: "Prompt" }}>
-          <Provider store={store}>
-            <DefaultLayout>
-              <Component {...pageProps} />
-            </DefaultLayout>
-          </Provider>
+          <ModalsProvider>
+            <Provider store={store}>
+              <DefaultLayout>
+                <Component {...pageProps} />
+              </DefaultLayout>
+            </Provider>
+          </ModalsProvider>
         </MantineProvider>
       </SessionProvider>
     </>
