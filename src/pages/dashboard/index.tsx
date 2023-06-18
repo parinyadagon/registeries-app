@@ -133,7 +133,7 @@ export default function Dashboard() {
       <Grid mx="auto" gutter="md">
         <Grid.Col span={12}>
           <Text fz={{ base: "1.9rem" }} fw="bold">
-            Overview
+            ภาพรวม
           </Text>
         </Grid.Col>
         <Grid.Col xs={12} xl={2}>
