@@ -81,7 +81,7 @@ export default function DefaultLayout({ children }: DefaultLayoutProps) {
               <div
                 style={{
                   display: "flex",
-                  justifyContent: "space-between",
+                  justifyContent: "flex-end",
                   alignItems: "center",
                   height: "100%",
                 }}>
@@ -94,12 +94,12 @@ export default function DefaultLayout({ children }: DefaultLayoutProps) {
                     mr="xl"
                   />
                 </MediaQuery>
-                <MediaQuery smallerThan="sm" styles={{ display: "none" }}>
+                {/* <MediaQuery smallerThan="sm" styles={{ display: "none" }}>
                   <MantineLogo size={28} />
-                </MediaQuery>
+                </MediaQuery> */}
                 {!auth ? (
                   <GoogleButton radius="xl" logIn={() => signIn()}>
-                    Sign In Google
+                    สร้างกิจกรรม
                   </GoogleButton>
                 ) : (
                   <></>
