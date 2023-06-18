@@ -25,7 +25,13 @@ import {
   ActionIcon,
 } from "@mantine/core";
 import { DateTimePicker } from "@mantine/dates";
-import { IconCheck, IconX, IconPlus, IconEdit } from "@tabler/icons-react";
+import {
+  IconCheck,
+  IconX,
+  IconPlus,
+  IconEdit,
+  IconChevronsDownLeft,
+} from "@tabler/icons-react";
 import { Notifications } from "@mantine/notifications";
 import { useDisclosure } from "@mantine/hooks";
 import { FileWithPath } from "@mantine/dropzone";
@@ -58,6 +64,8 @@ export default function CreatePage() {
 
   const [content, setContent] = useState<string>(``);
   const [oldContent, setOldContent] = useState<string>("");
+
+  const [imagePath, setImagePath] = useState<string>("");
 
   useEffectOnce(() => {
     return () => {
@@ -95,7 +103,8 @@ export default function CreatePage() {
       id: "",
       name: "",
       description: "",
-      limit_user: 18,
+      // limit_user: 18,
+      location: "",
       period_start: "",
       period_end: "",
       status: EventStatus.DRAFT,
@@ -105,13 +114,44 @@ export default function CreatePage() {
 
     validate: {
       name: isNotEmpty(),
-      limit_user: isNotEmpty(),
+      // limit_user: isNotEmpty(),
+      location: isNotEmpty(),
       period_start: isNotEmpty(),
       period_end: isNotEmpty(),
     },
   });
 
-  const handleClickSubmit = async (save_type: string) => {
+  function waitUntil(
+    condition: () => boolean,
+    interval: number
+  ): Promise<void> {
+    return new Promise<void>((resolve) => {
+      const checkCondition = async () => {
+        if (await condition()) {
+          resolve();
+        } else {
+          setTimeout(checkCondition, interval);
+        }
+      };
+
+      checkCondition();
+    });
+  }
+
+  function callFunctionTwice(func: () => void) {
+    func();
+    func();
+  }
+
+  // async function preSubmit() {
+  //   const { newImageName } = await uploadToServer();
+  //   if (newImageName) {
+  //     setImagePath(newImageName);
+  //     form.setFieldValue("image", newImageName);
+  //   }
+  // }
+
+  async function handleClickSubmit(save_type: string) {
     if (!form.validate().hasErrors) {
       if (save_type === "PUBLISHED") {
         form.setFieldValue("status", EventStatus.PUBLISHED);
@@ -119,19 +159,26 @@ export default function CreatePage() {
         form.setFieldValue("status", EventStatus.DRAFT);
       }
       form.setFieldValue("email", email);
+      // form.setFieldValue("image", imagePath);
 
-      form.setFieldValue("description", content);
+      form.setFieldValue("description", content || oldContent);
       const { newImageName } = await uploadToServer();
       if (newImageName) {
         form.setFieldValue("image", newImageName);
       }
 
-      form.setFieldValue("description", content || oldContent);
+      const event = {
+        ...form.values,
+        ...{
+          description: content || oldContent,
+          image: newImageName,
+        },
+      };
 
       const response = await fetchWithMethod(
         "/api/event/create",
         "POST",
-        form.values
+        event
       );
 
       if (response.status === 200) {
@@ -158,7 +205,7 @@ export default function CreatePage() {
         });
       }
     }
-  };
+  }
 
   // Rich Text Editor.
 
@@ -226,7 +273,8 @@ export default function CreatePage() {
     form.setFieldValue("email", email);
     form.setFieldValue("id", event.id);
     form.setFieldValue("name", event.name);
-    form.setFieldValue("limit_user", event.limit_user);
+    // form.setFieldValue("limit_user", event.limit_user);
+    form.setFieldValue("location", event.location);
     form.setFieldValue("period_start", dayjs(event.period_start).toDate());
     form.setFieldValue("period_end", dayjs(event.period_end).toDate());
     form.setFieldValue("status", event.status);
@@ -269,12 +317,13 @@ export default function CreatePage() {
       <Grid>
         <Grid.Col xs={12}>
           <Flex justify="start" align="center" direction="row" gap="md">
-            <Title order={1}>Event Management</Title>
+            <Title order={1}>จัดการกิจกรรม</Title>
             <Button
               onClick={handleOpenModal}
               rightIcon={<IconPlus size="1rem" />}>
-              Event
+              สร้างกิจกรรม
             </Button>
+
             <Modal
               opened={opened}
               onClose={handleCloseModal}
@@ -293,8 +342,8 @@ export default function CreatePage() {
                 <Grid.Col xs={12}>
                   <Box component="form" maw={900} mx="auto">
                     <TextInput
-                      label="Event Name"
-                      placeholder="Event Name"
+                      label="สร้างกิจกรรม"
+                      placeholder="สร้างกิจกรรม"
                       withAsterisk
                       {...form.getInputProps("name")}
                     />
@@ -302,7 +351,7 @@ export default function CreatePage() {
                       sx={{
                         padding: "0.75rem 0",
                       }}>
-                      <Text>Image Cover</Text>
+                      <Text>ภาพปก</Text>
                       <UploadImage
                         onGetImage={handleGetImage}
                         imagePreview={imagePreview}
@@ -312,7 +361,7 @@ export default function CreatePage() {
                       sx={{
                         padding: "0.75rem 0",
                       }}>
-                      <Text>Description</Text>
+                      <Text>รายละเอียดกิจกรรม</Text>
                       <TextEditor
                         onGetContent={handleGetContent}
                         oldContent={oldContent}
@@ -321,28 +370,28 @@ export default function CreatePage() {
 
                     <Flex justify="space-between" gap={10}>
                       <DateTimePicker
-                        label="Period start"
-                        placeholder="Pick date and time"
+                        label="วัน เวลาเริ่ม"
+                        placeholder="วัน เวลาเริ่ม"
                         valueFormat="DD MMM YYYY hh:mm A"
                         w="100%"
                         dropdownType="modal"
                         {...form.getInputProps("period_start")}
                       />
                       <DateTimePicker
-                        label="Period end"
-                        placeholder="Pick date and time"
+                        label="วัน เวลาสิ้นสุด"
+                        placeholder="วัน เวลาสิ้นสุด"
                         valueFormat="DD MMM YYYY hh:mm A"
                         w="100%"
                         dropdownType="modal"
                         {...form.getInputProps("period_end")}
                       />
                     </Flex>
-                    <NumberInput
-                      label="Limit user"
-                      placeholder="Limit user"
+                    <TextInput
+                      label="สถานที่"
+                      placeholder="สถานที่"
                       withAsterisk
                       mt="md"
-                      {...form.getInputProps("limit_user")}
+                      {...form.getInputProps("location")}
                     />
 
                     <Group position="right" mt="md">
@@ -385,7 +434,7 @@ export default function CreatePage() {
               <CardEvent
                 image={`/uploads/${event.image}`}
                 title={event.name}
-                location="location"
+                location={event.location}
                 date={`${convertDate(event.period_start)} - ${convertDate(
                   event.period_end
                 )}`}

@@ -37,7 +37,7 @@ export default async function handler(
           data: {
             name: event.name,
             description: event.description,
-            limit_user: event.limit_user,
+            location: event.location,
             period_start: event.period_start,
             period_end: event.period_end,
             status: event.status,
@@ -53,7 +53,7 @@ export default async function handler(
           data: {
             name: event.name,
             description: event.description,
-            limit_user: event.limit_user,
+            location: event.location,
             period_start: event.period_start,
             period_end: event.period_end,
             status: event.status,

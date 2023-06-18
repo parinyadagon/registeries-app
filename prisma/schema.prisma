@@ -62,7 +62,8 @@ model Event {
   id           String   @id @default(cuid())
   name         String
   description  String   @db.Text
-  limit_user   Int
+  limit_user   Int?
+  location     String
   period_start DateTime
   period_end   DateTime
   status       e_status
