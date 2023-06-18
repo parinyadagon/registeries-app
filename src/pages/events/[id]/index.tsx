@@ -22,7 +22,7 @@ import {
   TextInput,
   Box,
 } from "@mantine/core";
-import { IconCalendar, IconClock } from "@tabler/icons-react";
+import { IconCalendar, IconClock, IconMapPin } from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
 
 export default function EventDetails() {
@@ -122,22 +122,32 @@ export default function EventDetails() {
                     {event?.name}
                   </Text>
                 </Flex>
-                <Flex justify="start" align="center" gap="sm">
-                  <IconCalendar size={20} />
-                  <Text>
-                    {convertDate(event?.period_start)}
-                    {" - "}
-                    {convertDate(event?.period_end)}
-                  </Text>
-                </Flex>
-                <Flex justify="start" align="center" gap="sm">
-                  <IconClock size={20} />
-                  <Text>
-                    {convertTime(event?.period_start)}
-                    {" - "}
-                    {convertTime(event?.period_end)}
-                  </Text>
-                </Flex>
+                {event?.period_start && (
+                  <Flex justify="start" align="center" gap="sm">
+                    <IconCalendar size={20} />
+                    <Text>
+                      {convertDate(event?.period_start)}
+                      {" - "}
+                      {convertDate(event?.period_end)}
+                    </Text>
+                  </Flex>
+                )}
+                {event?.period_start && (
+                  <Flex justify="start" align="center" gap="sm">
+                    <IconClock size={20} />
+                    <Text>
+                      {convertTime(event?.period_start)}
+                      {" - "}
+                      {convertTime(event?.period_end)}
+                    </Text>
+                  </Flex>
+                )}
+                {event?.location && (
+                  <Flex justify="start" align="center" gap="sm">
+                    <IconMapPin size={20} />
+                    <Text>{event?.location}</Text>
+                  </Flex>
+                )}
               </Box>
               <Box
                 sx={{
