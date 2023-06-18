@@ -169,7 +169,7 @@ export default function CreatePage() {
         form.reset();
         Notifications.show({
           title: "Success",
-          message: "Event created",
+          message: "สร้างกิจกรรมแล้ว",
           autoClose: true,
           color: "green",
           icon: <IconCheck />,
@@ -177,7 +177,7 @@ export default function CreatePage() {
       } else {
         Notifications.show({
           title: "Error",
-          message: "Try again later",
+          message: "เกิดข้อผิดพลาดกรุณาลองใหม่อีกครั้ง",
           autoClose: true,
           color: "red",
           icon: <IconX />,
@@ -325,7 +325,7 @@ export default function CreatePage() {
             <Modal
               opened={opened}
               onClose={handleCloseModal}
-              title="Create Event"
+              title="สร้างกิจกรรม"
               fullScreen
               sx={{
                 "& .mantine-Modal-title": {
